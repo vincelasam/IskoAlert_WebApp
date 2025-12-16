@@ -19,30 +19,29 @@
 ## 🚀 Features
 
 ### 1. Incident Reporting Module
-[cite_start]Allows students and faculty to report campus emergencies or safety concerns directly to the administration[cite: 11].
-* [cite_start]**Submit Reports:** Users can provide detailed descriptions, categorize incidents (e.g., hazard, theft), specify campus location, and upload photo evidence[cite: 12].
-* [cite_start]**Status Tracking:** Reporters can track the progress of their reports via a personal dashboard (Pending → Accepted → In-Progress → Resolved)[cite: 13, 102].
-* [cite_start]**Admin Dashboard:** Security personnel can filter reports, update statuses, and assign staff to respond to specific incidents[cite: 13, 98].
+Allows students and faculty to report campus emergencies or safety concerns directly to the administration.
+ **Submit Reports:** Users can provide detailed descriptions, categorize incidents (e.g., hazard, theft), specify campus location, and upload photo evidence.
+ **Status Tracking:** Reporters can track the progress of their reports via a personal dashboard (Pending → Accepted → In-Progress → Resolved).
+ **Admin Dashboard:** Security personnel can filter reports, update statuses, and assign staff to respond to specific incidents.
 
 ### 2. Lost and Found Module
-[cite_start]A centralized platform for reporting and recovering lost items within the campus[cite: 14].
-* [cite_start]**Post Listings:** Users can report lost or found items with photos, descriptions, and last-known locations[cite: 15, 106].
-* [cite_start]**Browse & Search:** A searchable database of items that helps match owners with found belongings[cite: 16].
-* [cite_start]**Auto-Expiration:** Listings automatically expire after 30 days to keep the database current[cite: 15].
-* [cite_start]**Secure Contact:** Facilitates communication between parties using the official PUP Webmail system[cite: 16].
+[cite_start]A centralized platform for reporting and recovering lost items within the campus.
+ **Post Listings:** Users can report lost or found items with photos, descriptions, and last-known locations.
+ **Browse & Search:** A searchable database of items that helps match owners with found belongings.
+ **Auto-Expiration:** Listings automatically expire after 30 days to keep the database current.
+ **Secure Contact:** Facilitates communication between parties using the official PUP Webmail system.
 
 ### 3. Integration
-* [cite_start]**Authentication:** Integrates with the main Iskolar Alert app, requiring valid **PUP Webmail** credentials for access[cite: 9].
-* [cite_start]**Notifications:** Sends alerts via email and in-app dashboards when report statuses change or matches are found[cite: 18, 19].
+**Authentication:** Integrates with the main Iskolar Alert app, requiring valid **PUP Webmail** credentials for access.
+**Notifications:** Sends alerts via email and in-app dashboards when report statuses change or matches are found.
 
 ---
 
 ## 🛠 Tech Stack
-* [cite_start]**Framework:** ASP.NET Core Web App (Model-View-Controller) [cite: 7]
-* **Language:** C#
-* [cite_start]**Database:** SQL Server (via Entity Framework Core) [cite: 24, 293]
-* **Frontend:** HTML5, CSS3, JavaScript (Bootstrap)
-* **Tools:** Visual Studio, NuGet Package Manager, Git
+**Framework:** ASP.NET Core Web App (Model-View-Controller) 
+**Database:** SQL Server (via Entity Framework Core) 
+**Frontend:** HTML5, CSS3, JavaScript (Bootstrap)
+ **Tools:** Visual Studio, NuGet Package Manager, Git
 
 ---
 
