@@ -1,0 +1,143 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout"; // Connects to the Admin-specific layout we just made
+}
+
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-900">Admin Dashboard</h2>
+    <p class="text-gray-500">Manage incident reports and monitor system activity</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <div class="flex justify-between items-start mb-4">
+            <span class="text-gray-500 text-sm font-medium">Total Reports</span>
+            <i class="fa-regular fa-file-lines text-gray-400"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-900">6</h3>
+        <p class="text-xs text-gray-400 mt-1">All time</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <div class="flex justify-between items-start mb-4">
+            <span class="text-gray-500 text-sm font-medium">Pending</span>
+            <i class="fa-solid fa-circle-exclamation text-orange-400"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-900">1</h3>
+        <p class="text-xs text-gray-400 mt-1">Needs review</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <div class="flex justify-between items-start mb-4">
+            <span class="text-gray-500 text-sm font-medium">In Progress</span>
+            <i class="fa-regular fa-clock text-yellow-400"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-900">1</h3>
+        <p class="text-xs text-gray-400 mt-1">Being addressed</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <div class="flex justify-between items-start mb-4">
+            <span class="text-gray-500 text-sm font-medium">Resolved</span>
+            <i class="fa-regular fa-circle-check text-green-500"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-900">2</h3>
+        <p class="text-xs text-gray-400 mt-1">Completed</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <div class="h-12 w-12 rounded-full bg-[#800000] flex items-center justify-center text-white">
+                <i class="fa-regular fa-file-lines text-xl"></i>
+            </div>
+            <span class="text-gray-600 font-medium">Review and manage all incident reports</span>
+        </div>
+        <button class="bg-[#800000] hover:bg-red-900 text-white text-sm font-semibold py-2 px-6 rounded-lg transition-colors">
+            Manage
+        </button>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <div class="h-12 w-12 rounded-full bg-[#2E7D32] flex items-center justify-center text-white">
+                <i class="fa-solid fa-box-open text-xl"></i>
+            </div>
+            <span class="text-gray-600 font-medium">Monitor all lost and found listings</span>
+        </div>
+        <button class="bg-[#2E7D32] hover:bg-green-800 text-white text-sm font-semibold py-2 px-6 rounded-lg transition-colors">
+            View
+        </button>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="font-bold text-gray-900">Recent Reports</h3>
+        <a href="#" class="text-sm text-gray-600 hover:text-[#800000] font-medium">View All</a>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+            <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
+                <tr>
+                    <th class="px-6 py-3 font-medium">Report ID</th>
+                    <th class="px-6 py-3 font-medium">Type</th>
+                    <th class="px-6 py-3 font-medium">Reporter</th>
+                    <th class="px-6 py-3 font-medium">Date</th>
+                    <th class="px-6 py-3 font-medium">Status</th>
+                    <th class="px-6 py-3 font-medium">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+                
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-001</td>
+                    <td class="px-6 py-4">Theft</td>
+                    <td class="px-6 py-4">Lian Paredes</td>
+                    <td class="px-6 py-4">12/20/2024</td>
+                    <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Resolved</span></td>
+                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
+                </tr>
+
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-002</td>
+                    <td class="px-6 py-4">Safety Hazard</td>
+                    <td class="px-6 py-4">John Rich Nicolas</td>
+                    <td class="px-6 py-4">12/18/2024</td>
+                    <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Resolved</span></td>
+                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
+                </tr>
+
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-003</td>
+                    <td class="px-6 py-4">Vandalism</td>
+                    <td class="px-6 py-4">Admin User</td>
+                    <td class="px-6 py-4">12/22/2024</td>
+                    <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">Accepted</span></td>
+                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
+                </tr>
+
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-004</td>
+                    <td class="px-6 py-4">Property Damage</td>
+                    <td class="px-6 py-4">Vince Michael Lasam</td>
+                    <td class="px-6 py-4">12/26/2024</td>
+                    <td class="px-6 py-4"><span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold">Pending</span></td>
+                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
+                </tr>
+
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-005</td>
+                    <td class="px-6 py-4">Harassment</td>
+                    <td class="px-6 py-4">Admin User</td>
+                    <td class="px-6 py-4">12/23/2024</td>
+                    <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">In-Progress</span></td>
+                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
