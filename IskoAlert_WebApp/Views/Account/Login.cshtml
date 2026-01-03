@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Login";
+    Layout = null; // We set null here so we can control the full page background independently
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Iskolar Alert</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-sans antialiased">
+
+    <div class="relative min-h-screen flex items-center justify-center bg-cover bg-center"
+         style="background-image: url('/images/bg-pup.jpg');">
+
+        <div class="absolute inset-0 bg-black/30"></div>
+
+        <div class="relative z-10 w-full max-w-md p-8 rounded-lg shadow-2xl bg-gray-900/90 text-white border border-gray-700">
+
+            <div class="flex flex-col items-center mb-6 text-center">
+                <img src="/images/pup-logo.png" alt="PUP Logo" class="h-16 w-16 mb-3">
+                <h1 class="text-2xl font-bold text-white">Iskolar Alert</h1>
+                <p class="text-yellow-400 font-medium text-sm">Your Safety, Our Priority</p>
+            </div>
+
+            <p class="text-gray-400 text-center mb-6 text-sm">Sign in to start your session</p>
+
+            <form asp-action="Login" asp-controller="Account" method="post" class="space-y-5">
+
+    <div>
+        <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Login As</label>
+        <div class="relative">
+            <select name="role" class="w-full bg-transparent border border-gray-500 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 appearance-none">
+                <option value="Student" class="bg-gray-800">Student</option>
+                <option value="Admin" class="bg-gray-800">Admin</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">PUP Email</label>
+        <input type="email"
+               name="email"
+               placeholder="your.name@pup.edu.ph"
+               class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 placeholder-gray-500 transition-colors"
+               required>
+    </div>
+
+    <div>
+        <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Password</label>
+        <input type="password"
+               name="password"
+               placeholder="Enter your password"
+               class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 placeholder-gray-500 transition-colors"
+               required>
+    </div>
+
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <div class="p-3 bg-red-500/20 border border-red-500 rounded text-red-200 text-sm text-center">
+            @ViewData["ErrorMessage"]
+        </div>
+    }
+
+    <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-800 font-semibold rounded-lg text-sm px-5 py-3 text-center transition-all shadow-lg hover:shadow-blue-500/50 mt-4">
+        Sign in
+    </button>
+</form>
+
+            <div class="mt-6 text-center text-xs text-gray-500">
+                Demo: Use any email and password to login
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

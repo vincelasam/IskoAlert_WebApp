@@ -1,8 +1,110 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-900">Welcome back, Lian Paredes!</h2>
+    <p class="text-gray-500">Track your reports and browse lost & found items</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start mb-4">
+            <span class="text-gray-500 text-sm font-medium">Total Reports</span>
+            <i class="fa-regular fa-file-lines text-gray-400"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-900">1</h3>
+        <p class="text-xs text-gray-400 mt-1">All incident reports</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start mb-4">
+            <span class="text-gray-500 text-sm font-medium">Pending</span>
+            <i class="fa-solid fa-circle-exclamation text-orange-400"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-900">0</h3>
+        <p class="text-xs text-gray-400 mt-1">Awaiting review</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start mb-4">
+            <span class="text-gray-500 text-sm font-medium">In Progress</span>
+            <i class="fa-regular fa-clipboard text-yellow-400"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-900">0</h3>
+        <p class="text-xs text-gray-400 mt-1">Being addressed</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start mb-4">
+            <span class="text-gray-500 text-sm font-medium">Lost & Found</span>
+            <i class="fa-solid fa-box-open text-blue-400"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-900">1</h3>
+        <p class="text-xs text-gray-400 mt-1">Items listed</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+
+    <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center group cursor-pointer hover:border-red-200 transition-colors">
+        <div class="h-14 w-14 rounded-full bg-red-100 text-[#800000] flex items-center justify-center mb-4 group-hover:bg-[#800000] group-hover:text-white transition-colors">
+            <i class="fa-solid fa-circle-exclamation text-2xl"></i>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900">Report Incident</h3>
+        <p class="text-sm text-gray-500 mb-6">Submit a new incident report</p>
+        <button class="w-full py-2.5 bg-[#800000] text-white font-semibold rounded-lg hover:bg-red-900">Submit Report</button>
+    </div>
+
+    <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center group cursor-pointer hover:border-blue-200 transition-colors">
+        <div class="h-14 w-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-file-contract text-2xl"></i>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900">My Reports</h3>
+        <p class="text-sm text-gray-500 mb-6">Track your incident reports</p>
+        <button class="w-full py-2.5 bg-[#007acc] text-white font-semibold rounded-lg hover:bg-blue-600">View Reports</button>
+    </div>
+
+    <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center group cursor-pointer hover:border-green-200 transition-colors">
+        <div class="h-14 w-14 rounded-full bg-green-100 text-green-700 flex items-center justify-center mb-4 group-hover:bg-green-700 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-box text-2xl"></i>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900">Lost & Found</h3>
+        <p class="text-sm text-gray-500 mb-6">Browse lost and found items</p>
+        <button class="w-full py-2.5 bg-[#2E7D32] text-white font-semibold rounded-lg hover:bg-green-700">Browse Items</button>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="font-bold text-gray-900">Recent Notifications</h3>
+        <a href="#" class="text-sm text-gray-600 hover:text-[#800000] font-medium">View All</a>
+    </div>
+
+    <div class="divide-y divide-gray-100">
+        <div class="p-6 hover:bg-yellow-50/50 transition-colors border-l-4 border-yellow-400 bg-yellow-50">
+            <div class="flex items-center gap-3 mb-1">
+                <h4 class="font-semibold text-gray-900">Report Status Updated</h4>
+                <span class="bg-yellow-400 text-xs font-bold px-2 py-0.5 rounded text-[#800000]">New</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Your incident report #IR-2025-001 status has been updated to "In-Progress"</p>
+            <p class="text-xs text-gray-400">12/22/2024, 2:20:00 PM</p>
+        </div>
+
+        <div class="p-6 hover:bg-gray-50 transition-colors border-l-4 border-transparent">
+            <h4 class="font-semibold text-gray-900 mb-1">Report Resolved</h4>
+            <p class="text-sm text-gray-600 mb-2">Your incident report #IR-2025-002 has been resolved.</p>
+            <p class="text-xs text-gray-400">12/19/2024, 4:30:00 PM</p>
+        </div>
+
+        <div class="p-6 hover:bg-yellow-50/50 transition-colors border-l-4 border-yellow-400 bg-yellow-50">
+            <div class="flex items-center gap-3 mb-1">
+                <h4 class="font-semibold text-gray-900">New Lost Item Match</h4>
+                <span class="bg-yellow-400 text-xs font-bold px-2 py-0.5 rounded text-[#800000]">New</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">A new found item matches your search criteria.</p>
+            <p class="text-xs text-gray-400">12/21/2024, 11:00:00 AM</p>
+        </div>
+    </div>
 </div>
