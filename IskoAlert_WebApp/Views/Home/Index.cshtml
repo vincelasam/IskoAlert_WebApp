@@ -54,7 +54,9 @@
         </div>
         <h3 class="text-lg font-bold text-gray-900">Report Incident</h3>
         <p class="text-sm text-gray-500 mb-6">Submit a new incident report</p>
-        <button class="w-full py-2.5 bg-[#800000] text-white font-semibold rounded-lg hover:bg-red-900">Submit Report</button>
+        <a asp-controller="Home" asp-action="ReportIncident" class="w-full block py-2.5 bg-[#800000] text-white font-semibold rounded-lg hover:bg-red-900 transition-colors">
+            Submit Report
+        </a>
     </div>
 
     <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center group cursor-pointer hover:border-blue-200 transition-colors">
