@@ -18,5 +18,10 @@ namespace IskolarAlert.Controllers
         {
             return View();
         }
+
+        public IActionResult ReviewIncident()
+        {
+            return View();
+        }
     }
 }
