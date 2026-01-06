@@ -23,5 +23,10 @@ namespace IskolarAlert.Controllers
         {
             return View();
         }
+
+        public IActionResult ManageLostFound()
+        {
+            return View();
+        }
     }
 }
