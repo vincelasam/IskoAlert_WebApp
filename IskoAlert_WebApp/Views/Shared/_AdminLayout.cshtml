@@ -12,35 +12,38 @@
 <body class="bg-gray-50 text-gray-800">
 
     <header class="bg-[#800000] text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                
-                <div class="flex items-center gap-3">
-                    <img src="/images/pup-logo.png" alt="Logo" class="h-10 w-10">
-                    <div class="leading-tight">
-                        <h1 class="font-bold text-lg tracking-wide">Iskolar Alert</h1>
-                        <p class="text-[10px] text-yellow-400 font-medium uppercase tracking-wider">Admin Portal</p>
-                    </div>
-                </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
 
-                <div class="flex items-center gap-6">
-                    <div class="relative cursor-pointer">
-                        <i class="fa-regular fa-bell text-xl"></i>
-                    </div>
-
-                    <div class="flex items-center gap-3 pl-6 border-l border-red-800">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-semibold">Admin User</p>
-                            <p class="text-xs text-yellow-400">System Administrator</p>
-                        </div>
-                        <div class="h-8 w-8 bg-red-800 rounded-full flex items-center justify-center border border-yellow-400">
-                            <i class="fa-solid fa-user-shield text-sm"></i>
-                        </div>
-                    </div>
+            <div class="flex items-center gap-3">
+                <img src="/images/pup-logo.png" alt="Logo" class="h-10 w-10">
+                <div class="leading-tight">
+                    <h1 class="font-bold text-lg tracking-wide">Iskolar Alert</h1>
+                    <p class="text-[10px] text-yellow-400 font-medium uppercase tracking-wider">Admin Portal</p>
                 </div>
             </div>
+
+            <div class="flex items-center gap-6">
+
+                <a asp-controller="Admin" asp-action="Notifications" class="relative cursor-pointer hover:text-yellow-400 transition-colors">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                    <span class="absolute -top-1 -right-1 bg-yellow-400 text-[#800000] text-[10px] font-bold px-1 rounded-full">2</span>
+                </a>
+
+                <div class="flex items-center gap-3 pl-6 border-l border-red-800">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-semibold">Admin User</p>
+                        <p class="text-xs text-yellow-400">System Administrator</p>
+                    </div>
+                    <div class="h-8 w-8 bg-red-800 rounded-full flex items-center justify-center border border-yellow-400">
+                        <i class="fa-solid fa-user-shield text-sm"></i>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </header>
+    </div>
+</header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         @RenderBody()
