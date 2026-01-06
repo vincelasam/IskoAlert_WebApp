@@ -65,7 +65,9 @@
         </div>
         <h3 class="text-lg font-bold text-gray-900">My Reports</h3>
         <p class="text-sm text-gray-500 mb-6">Track your incident reports</p>
-        <button class="w-full py-2.5 bg-[#007acc] text-white font-semibold rounded-lg hover:bg-blue-600">View Reports</button>
+        <a asp-controller="Home" asp-action="MyReports" class="w-full block py-2.5 bg-[#007acc] text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors">
+            View Reports
+        </a>
     </div>
 
     <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center group cursor-pointer hover:border-green-200 transition-colors">
