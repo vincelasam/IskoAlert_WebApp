@@ -1,41 +1,61 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace IskolarAlert.Controllers
+namespace IskoAlert_WebApp.Controllers
 {
     public class AccountController : Controller
     {
-        // GET: /Account/Login
-        // This is what runs when you first open the page
-        [HttpGet]
+        // GET: Account/Login
+        // Displays the Login Page
         public IActionResult Login()
         {
             return View();
         }
 
-        // POST: /Account/Login
-        // This runs when you click the "Sign In" button
+        // POST: Account/Login
+        // Handles the actual login logic (checking username/password)
         [HttpPost]
-        public IActionResult Login(string email, string password, string role)
+        public IActionResult Login(string username, string password)
         {
-            // Simple validation: Ensure fields are not empty
-            if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
-            {
-                // LOGIC: If the user selects "Student", go to the Dashboard
-                if (role == "Student")
-                {
-                    // Redirects to HomeController -> Index Action (Your Dashboard)
-                    return RedirectToAction("Index", "Home");
-                }
-                else if (role == "Admin")
-                {
-                    // Redirect to the Admin Controller, Index Action
-                    return RedirectToAction("Index", "Admin");
-                }
-            }
+            // TODO: Connect this to the database later.
+            // For now, we manually check the roles for your prototype.
 
-            // If we get here, something was empty or wrong
-            ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
+            if (username == "admin" && password == "admin")
+            {
+                // Redirect to Admin Dashboard
+                return RedirectToAction("Index", "Admin");
+            }
+            else
+            {
+                // Default: Redirect to Student Dashboard
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        // GET: Account/Register
+        // Displays the Registration Page
+        public IActionResult Register()
+        {
             return View();
+        }
+
+        // POST: Account/Register
+        // Handles creating a new user
+        [HttpPost]
+        public IActionResult Register(string email, string password, string confirmPassword)
+        {
+            // TODO: Save the new user to the database later.
+
+            // After registration, redirect to Login
+            return RedirectToAction("Login");
+        }
+
+        // POST: Account/Logout
+        // Logs the user out
+        public IActionResult Logout()
+        {
+            // TODO: Clear session/cookies later.
+
+            return RedirectToAction("Login");
         }
     }
 }
