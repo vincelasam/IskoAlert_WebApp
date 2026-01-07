@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using IskolarAlert.Models;
+using IskoAlert_WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IskolarAlert.Controllers
