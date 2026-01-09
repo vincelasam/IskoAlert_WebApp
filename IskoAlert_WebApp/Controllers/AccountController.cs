@@ -4,6 +4,13 @@ namespace IskolarAlert.Controllers
 {
     public class AccountController : Controller
     {
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+ 
         // GET: /Account/Login
         // This is what runs when you first open the page
         [HttpGet]
@@ -11,7 +18,6 @@ namespace IskolarAlert.Controllers
         {
             return View();
         }
-
         // POST: /Account/Login
         // This runs when you click the "Sign In" button
         [HttpPost]
