@@ -4,17 +4,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IskolarAlert.Controllers
 {
-    public class HomeController : Controller
+    public class IncidentReportController : Controller
     {
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult ReportIncident()
         {
             return View();
         }
+
+        public IActionResult ReportDetails()
+        {
+            return View();
+        }
+
+        public IActionResult Feedback()
+        {
+            return View();
+        }
+
     
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

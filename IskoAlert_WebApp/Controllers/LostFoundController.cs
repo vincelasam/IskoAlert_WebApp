@@ -4,14 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IskolarAlert.Controllers
 {
-    public class HomeController : Controller
+    public class LostFoundController : Controller
     {
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult ReportLostItem()
+        {
+            return View();
+        }
+
+        public IActionResult Details() // details ng mga reports
+        {
+            return View();
+        }
+
+        public IActionResult MyListings() //Listings ng mga reports
         {
             return View();
         }

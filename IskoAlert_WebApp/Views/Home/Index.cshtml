@@ -54,7 +54,7 @@
         </div>
         <h3 class="text-lg font-bold text-gray-900">Report Incident</h3>
         <p class="text-sm text-gray-500 mb-6">Submit a new incident report</p>
-        <a asp-controller="Home" asp-action="ReportIncident" class="w-full block py-2.5 bg-[#800000] text-white font-semibold rounded-lg hover:bg-red-900 transition-colors">
+        <a asp-controller="IncidentReport" asp-action="ReportIncident" class="w-full block py-2.5 bg-[#800000] text-white font-semibold rounded-lg hover:bg-red-900 transition-colors">
             Submit Report
         </a>
     </div>
@@ -65,7 +65,7 @@
         </div>
         <h3 class="text-lg font-bold text-gray-900">My Reports</h3>
         <p class="text-sm text-gray-500 mb-6">Track your incident reports</p>
-        <a asp-controller="Home" asp-action="MyReports" class="w-full block py-2.5 bg-[#007acc] text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors">
+        <a asp-controller="IncidentReport" asp-action="Index" class="w-full block py-2.5 bg-[#007acc] text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors">
             View Reports
         </a>
     </div>
@@ -76,7 +76,7 @@
         </div>
         <h3 class="text-lg font-bold text-gray-900">Lost & Found</h3>
         <p class="text-sm text-gray-500 mb-6">Browse lost and found items</p>
-        <a asp-controller="Home" asp-action="LostAndFound" class="w-full block py-2.5 bg-[#2E7D32] text-white font-semibold rounded-lg hover:bg-green-800 transition-colors">
+        <a asp-controller="LostFound" asp-action="Index" class="w-full block py-2.5 bg-[#2E7D32] text-white font-semibold rounded-lg hover:bg-green-800 transition-colors">
             Browse Items
         </a>
     </div>
