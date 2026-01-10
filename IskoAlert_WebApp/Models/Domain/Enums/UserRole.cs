@@ -1,6 +1,8 @@
 ﻿namespace IskoAlert_WebApp.Models.Domain.Enums
 {
-    public class UserRole
+    public enum UserRole
     {
+        Student,
+        Admin
     }
 }

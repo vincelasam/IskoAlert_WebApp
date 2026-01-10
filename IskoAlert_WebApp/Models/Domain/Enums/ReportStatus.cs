@@ -1,6 +1,10 @@
 ﻿namespace IskoAlert_WebApp.Models.Domain.Enums
 {
-    public class ReportStatus
+    public enum ReportStatus
     {
+        Accepted,
+        InProgress,
+        Resolved,
+        Rejected
     }
 }

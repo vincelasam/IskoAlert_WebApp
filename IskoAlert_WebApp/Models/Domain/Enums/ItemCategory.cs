@@ -1,6 +1,11 @@
 ﻿namespace IskoAlert_WebApp.Models.Domain.Enums
 {
-    public class ItemCategory
+    public enum ItemCategory
     {
+        Clothes,
+        Electronics,
+        Documents,
+        Accessories,
+        Others
     }
 }
