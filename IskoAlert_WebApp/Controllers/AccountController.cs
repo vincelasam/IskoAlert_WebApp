@@ -9,12 +9,11 @@ namespace IskolarAlert.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        // Constructor: Database Access
-        public AccountController(ApplicationDbContext context)
+        private readonly IUserService _userService;  // ← Inject service
+        
+        public AccountController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -27,25 +26,23 @@ namespace IskolarAlert.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // MAPPING: Convert ViewModel to Domain Model
-                var newUser = new User(
-                    model.IdNumber,
-                    model.Webmail,
-                    model.Password, 
-                    model.FullName,
-                    UserRole.Student // Default role for registration
-                );
-
-                // SAVE TO DB
-                _context.Users.Add(newUser);
-                await _context.SaveChangesAsync();
-
+                return View(model);  // Return with validation errors
+            }
+            
+            try
+            {
+                await _userService.RegisterAsync(model);
+                
+                TempData["SuccessMessage"] = "Registration successful!";
                 return RedirectToAction("Login");
-            } 
-            return View(model);
-
+            }
+            catch (Exception ex)  // Handle business logic errors
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
         }
 
         [HttpGet]
