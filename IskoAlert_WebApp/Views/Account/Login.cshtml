@@ -1,6 +1,6 @@
 @{
     ViewData["Title"] = "Login";
-    Layout = null; // We set null here so we can control the full page background independently
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -30,50 +30,57 @@
 
             <form asp-action="Login" asp-controller="Account" method="post" class="space-y-5">
 
-    <div>
-        <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Login As</label>
-        <div class="relative">
-            <select name="role" class="w-full bg-transparent border border-gray-500 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 appearance-none">
-                <option value="Student" class="bg-gray-800">Student</option>
-                <option value="Admin" class="bg-gray-800">Admin</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Login As</label>
+                    <div class="relative">
+                        <select name="role" class="w-full bg-transparent border border-gray-500 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 appearance-none">
+                            <option value="Student" class="bg-gray-800">Student</option>
+                            <option value="Admin" class="bg-gray-800">Admin</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">PUP Email</label>
+                    <input type="email"
+                           name="email"
+                           placeholder="your.name@pup.edu.ph"
+                           class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 placeholder-gray-500 transition-colors"
+                           required>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Password</label>
+                    <input type="password"
+                           name="password"
+                           placeholder="Enter your password"
+                           class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 placeholder-gray-500 transition-colors"
+                           required>
+                </div>
+
+                @if (ViewData["ErrorMessage"] != null)
+                {
+                    <div class="p-3 bg-red-500/20 border border-red-500 rounded text-red-200 text-sm text-center">
+                        @ViewData["ErrorMessage"]
+                    </div>
+                }
+
+                <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-800 font-semibold rounded-lg text-sm px-5 py-3 text-center transition-all shadow-lg hover:shadow-blue-500/50 mt-4">
+                    Sign in
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm border-t border-gray-700 pt-4">
+                <span class="text-gray-400">Don't have an account?</span>
+                <a asp-action="Register" asp-controller="Account" class="text-blue-400 hover:text-blue-300 font-semibold hover:underline ml-1">
+                    Sign up
+                </a>
             </div>
-        </div>
-    </div>
 
-    <div>
-        <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">PUP Email</label>
-        <input type="email"
-               name="email"
-               placeholder="your.name@pup.edu.ph"
-               class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 placeholder-gray-500 transition-colors"
-               required>
-    </div>
-
-    <div>
-        <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Password</label>
-        <input type="password"
-               name="password"
-               placeholder="Enter your password"
-               class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 placeholder-gray-500 transition-colors"
-               required>
-    </div>
-
-    @if (ViewData["ErrorMessage"] != null)
-    {
-        <div class="p-3 bg-red-500/20 border border-red-500 rounded text-red-200 text-sm text-center">
-            @ViewData["ErrorMessage"]
-        </div>
-    }
-
-    <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-800 font-semibold rounded-lg text-sm px-5 py-3 text-center transition-all shadow-lg hover:shadow-blue-500/50 mt-4">
-        Sign in
-    </button>
-</form>
-
-            <div class="mt-6 text-center text-xs text-gray-500">
+            <div class="mt-2 text-center text-xs text-gray-500">
                 Demo: Use any email and password to login
             </div>
         </div>
