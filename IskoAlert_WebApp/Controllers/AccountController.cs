@@ -1,4 +1,4 @@
-using IskoAlert_WebApp.Data; 
+    
 using IskoAlert_WebApp.Models.Domain;
 using IskoAlert_WebApp.Models.Domain.Enums;
 using IskoAlert_WebApp.Models.ViewModels.Account;
@@ -10,7 +10,7 @@ namespace IskolarAlert.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserService _userService;  // ← Inject service
+        private readonly IUserService _userService; 
         
         public AccountController(IUserService userService)
         {
@@ -54,22 +54,34 @@ namespace IskolarAlert.Controllers
 
         // POST: /Account/Login
         [HttpPost]
-        public IActionResult Login(string email, string password, string role)
+        public async Task<IActionResult> Login(string email, string password, string role)
         {
-            if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                if (role == "Student")
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-                else if (role == "Admin")
-                {
-                    return RedirectToAction("Index", "Admin");
-                }
+                ViewData["ErrorMessage"] = "Email and password are required.";
+                return View();
             }
 
-            ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
-            return View();
+            try
+            {
+                var user = await _userService.ValidateCredentialsAsync(email, password, Enum.Parse<UserRole>(role));
+
+                if (user == null)
+                {
+                    ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
+                    return View();
+                }
+
+                if (user.Role == UserRole.Student)
+                    return RedirectToAction("Index", "Home");
+                else
+                    return RedirectToAction("Index", "Admin");
+            }
+            catch (Exception ex)
+            {
+                ViewData["ErrorMessage"] = ex.Message;
+                return View();
+            }
         }
         
     }
