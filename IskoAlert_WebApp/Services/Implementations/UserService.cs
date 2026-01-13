@@ -45,5 +45,19 @@ namespace IskoAlert_WebApp.Services.Implementations{
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<User?> ValidateCredentialsAsync(string email, string password, UserRole role)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Webmail == email && u.Role == role);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+                return null;
+
+            if (user.AccountStatus != AccountStatus.Active)
+                throw new InvalidOperationException("Account is inactive.");
+
+            return user;
+        }
     }
 }
