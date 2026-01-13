@@ -29,7 +29,7 @@ namespace IskolarAlert.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);  // Return with validation errors
+                return View(model); 
             }
             
             try
@@ -54,17 +54,14 @@ namespace IskolarAlert.Controllers
 
         // POST: /Account/Login
         [HttpPost]
-        public async Task<IActionResult> Login(string email, string password, string role)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-            {
-                ViewData["ErrorMessage"] = "Email and password are required.";
-                return View();
-            }
+            if (!ModelState.IsValid)
+                return View(model);
 
             try
             {
-                var user = await _userService.ValidateCredentialsAsync(email, password, Enum.Parse<UserRole>(role));
+                var user = await _userService.ValidateCredentialsAsync(model.Email, model.Password, Enum.Parse<UserRole>(model.Role));
 
                 if (user == null)
                 {
@@ -83,6 +80,6 @@ namespace IskolarAlert.Controllers
                 return View();
             }
         }
-        
+
     }
 }
