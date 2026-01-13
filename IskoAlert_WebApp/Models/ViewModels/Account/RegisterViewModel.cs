@@ -17,8 +17,8 @@ namespace IskoAlert_WebApp.Models.ViewModels.Account
         [EmailAddress]
         public string Webmail { get; set; }
 
-        [Required]
-        [MinLength(8)]
+        [Required(ErrorMessage = "Password is required")]
+        [MinLength(8)(ErrorMessage = "Password must be at least 8 characters long")]
         public string Password { get; set; }
 
         [Required]
