@@ -7,12 +7,13 @@ namespace IskoAlert_WebApp.Models.Domain
     {
         public int UserId { get; private set; }
         public string IdNumber { get; private set; }
+        public string Name { get; set; }
         public string Webmail { get; private set; }
         public string PasswordHash { get; private set; }
-        public DateTime AccountCreated { get; private set; }
-        public AccountStatus AccountStatus { get; private set; }
         public UserRole Role { get; private set; }
-        public string Name { get; set; }
+        public AccountStatus AccountStatus { get; private set; }
+        public DateTime AccountCreated { get; private set; }
+
 
         // Constructor = how a VALID user is created
         public User(string idNumber, string webmail, string passwordHash, string name, UserRole role)
