@@ -3,7 +3,8 @@ using IskoAlert_WebApp.Models.Domain;
 using IskoAlert_WebApp.Models.Domain.Enums;
 using IskoAlert_WebApp.Models.ViewModels.Account;
 using Microsoft.AspNetCore.Mvc;
-using IskoAlert_WebApp.Models.ViewModels.Account; // Import your ViewModel namespace
+using IskoAlert_WebApp.Models.ViewModels.Account;
+using IskoAlert_WebApp.Services.Interfaces;
 
 namespace IskolarAlert.Controllers
 {
