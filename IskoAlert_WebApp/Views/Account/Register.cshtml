@@ -1,5 +1,89 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model IskoAlert_WebApp.Models.ViewModels.Account.RegisterViewModel
 @{
+    ViewData["Title"] = "Register";
+    Layout = null;
 }
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Iskolar Alert</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-sans antialiased">
+
+    <div class="relative min-h-screen flex items-center justify-center bg-cover bg-center"
+         style="background-image: url('/images/bg-pup.jpg');">
+
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="relative z-10 w-full max-w-md p-8 rounded-lg shadow-2xl bg-gray-900/95 text-white border border-gray-700 my-10">
+
+            <div class="flex flex-col items-center mb-6 text-center">
+                <img src="/images/pup-logo.png" alt="PUP Logo" class="h-14 w-14 mb-2">
+                <h1 class="text-2xl font-bold text-white">Join Iskolar Alert</h1>
+                <p class="text-gray-400 text-sm">Create your student account</p>
+            </div>
+
+            <form asp-action="Register" asp-controller="Account" method="post" class="space-y-4">
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Student ID</label>
+                    <input asp-for="IdNumber"
+                           placeholder="202X-XXXXX-MN-0"
+                           class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-500 transition-colors" />
+                    <span asp-validation-for="IdNumber" class="text-red-400 text-xs mt-1 block"></span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Full Name</label>
+                    <input asp-for="FullName"
+                           placeholder="Juan Dela Cruz"
+                           class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-500 transition-colors" />
+                    <span asp-validation-for="FullName" class="text-red-400 text-xs mt-1 block"></span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">PUP Webmail</label>
+                    <input asp-for="Webmail"
+                           placeholder="juan@iskolarngbayan.pup.edu.ph"
+                           class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-500 transition-colors" />
+                    <span asp-validation-for="Webmail" class="text-red-400 text-xs mt-1 block"></span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Password</label>
+                    <input asp-for="Password" type="password"
+                           placeholder="••••••••"
+                           class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-500 transition-colors" />
+                    <span asp-validation-for="Password" class="text-red-400 text-xs mt-1 block"></span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" type="password"
+                           placeholder="••••••••"
+                           class="bg-transparent border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-500 transition-colors" />
+                    <span asp-validation-for="ConfirmPassword" class="text-red-400 text-xs mt-1 block"></span>
+                </div>
+
+                <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-800 font-semibold rounded-lg text-sm px-5 py-3 text-center transition-all shadow-lg hover:shadow-blue-500/50 mt-2">
+                    Sign Up
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm">
+                <span class="text-gray-400">Already have an account?</span>
+                <a asp-action="Login" asp-controller="Account" class="text-blue-400 hover:text-blue-300 font-semibold hover:underline ml-1">
+                    Sign in here
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+</body>
+</html>
