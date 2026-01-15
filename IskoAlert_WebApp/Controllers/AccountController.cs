@@ -1,4 +1,4 @@
-    
+
 using IskoAlert_WebApp.Models.Domain;
 using IskoAlert_WebApp.Models.Domain.Enums;
 using IskoAlert_WebApp.Models.ViewModels.Account;
@@ -12,8 +12,8 @@ namespace IskolarAlert.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserService _userService; 
-        
+        private readonly IUserService _userService;
+
         public AccountController(IUserService userService)
         {
             _userService = userService;
@@ -31,13 +31,13 @@ namespace IskolarAlert.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model); 
+                return View(model);
             }
-            
+
             try
             {
                 await _userService.RegisterAsync(model);
-                
+
                 TempData["SuccessMessage"] = "Registration successful!";
                 return RedirectToAction("Login");
             }
@@ -67,6 +67,7 @@ namespace IskolarAlert.Controllers
 
                 if (user != null)
                 {
+                    // Create a list of claims representing the authenticated user's data
                     var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Name),
@@ -74,9 +75,11 @@ namespace IskolarAlert.Controllers
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
+                    // Initialize the identity using the designated cookie authentication scheme
                     var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
                     var authProperties = new AuthenticationProperties { IsPersistent = true };
 
+                    // Issue the authentication cookie to the user's browser
                     await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
 
                     if (user.Role == UserRole.Student)
@@ -85,14 +88,15 @@ namespace IskolarAlert.Controllers
                         return RedirectToAction("Index", "Admin");
                 }
 
-                // HETO ANG KULANG: Kapag mali ang credentials (user == null)
+                // Return to view with an error message if credentials do not match
                 ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
                 return View(model);
             }
             catch (Exception ex)
             {
+                // Catch and display any business logic exceptions (e.g., account status issues)
                 ViewData["ErrorMessage"] = ex.Message;
-                return View(model); // Siguraduhin na may return din dito
+                return View(model);
             }
         }
 
