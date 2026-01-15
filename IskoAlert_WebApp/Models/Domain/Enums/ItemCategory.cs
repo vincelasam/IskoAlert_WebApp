@@ -6,6 +6,7 @@
         Electronics,
         Documents,
         Accessories,
+        Personal,
         Others
     }
 }

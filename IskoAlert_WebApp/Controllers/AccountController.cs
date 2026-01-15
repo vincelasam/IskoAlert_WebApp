@@ -1,20 +1,20 @@
-using IskoAlert_WebApp.Data; 
+    
 using IskoAlert_WebApp.Models.Domain;
 using IskoAlert_WebApp.Models.Domain.Enums;
 using IskoAlert_WebApp.Models.ViewModels.Account;
 using Microsoft.AspNetCore.Mvc;
-using IskoAlert_WebApp.Models.ViewModels.Account; // Import your ViewModel namespace
+using IskoAlert_WebApp.Models.ViewModels.Account;
+using IskoAlert_WebApp.Services.Interfaces;
 
 namespace IskolarAlert.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        // Constructor: Database Access
-        public AccountController(ApplicationDbContext context)
+        private readonly IUserService _userService; 
+        
+        public AccountController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -27,25 +27,23 @@ namespace IskolarAlert.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // MAPPING: Convert ViewModel to Domain Model
-                var newUser = new User(
-                    model.IdNumber,
-                    model.Webmail,
-                    model.Password, 
-                    model.FullName,
-                    UserRole.Student // Default role for registration
-                );
-
-                // SAVE TO DB
-                _context.Users.Add(newUser);
-                await _context.SaveChangesAsync();
-
+                return View(model); 
+            }
+            
+            try
+            {
+                await _userService.RegisterAsync(model);
+                
+                TempData["SuccessMessage"] = "Registration successful!";
                 return RedirectToAction("Login");
-            } 
-            return View(model);
-
+            }
+            catch (Exception ex)  // Handle business logic errors
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
         }
 
         [HttpGet]
@@ -56,23 +54,32 @@ namespace IskolarAlert.Controllers
 
         // POST: /Account/Login
         [HttpPost]
-        public IActionResult Login(string email, string password, string role)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
-            {
-                if (role == "Student")
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-                else if (role == "Admin")
-                {
-                    return RedirectToAction("Index", "Admin");
-                }
-            }
+            if (!ModelState.IsValid)
+                return View(model);
 
-            ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
-            return View();
+            try
+            {
+                var user = await _userService.ValidateCredentialsAsync(model.Email, model.Password, Enum.Parse<UserRole>(model.Role));
+
+                if (user == null)
+                {
+                    ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
+                    return View();
+                }
+
+                if (user.Role == UserRole.Student)
+                    return RedirectToAction("Index", "Home");
+                else
+                    return RedirectToAction("Index", "Admin");
+            }
+            catch (Exception ex)
+            {
+                ViewData["ErrorMessage"] = ex.Message;
+                return View();
+            }
         }
-        
+
     }
 }
