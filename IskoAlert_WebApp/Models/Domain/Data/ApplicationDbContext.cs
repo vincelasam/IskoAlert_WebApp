@@ -12,7 +12,7 @@ namespace IskoAlert_WebApp.Data
 
         // --- Core Tables based on SRS Documentation ---
         public DbSet<User> Users { get; set; }
-        //public DbSet<IncidentReport> IncidentReports { get; set; }
+        public DbSet<IncidentReport> IncidentReports { get; set; }
         //public DbSet<LostFoundItem> LostAndFoundItems { get; set; }
         //public DbSet<Notification> Notifications { get; set; }
 
@@ -35,26 +35,26 @@ namespace IskoAlert_WebApp.Data
                 entity.Property(u => u.AccountStatus).HasConversion<string>().IsRequired();
             });
 
-            //// 2. INCIDENT REPORT CONFIGURATION
-            //modelBuilder.Entity<IncidentReport>(entity =>
-            //{
-            //    entity.HasKey(ir => ir.ReportId);
+            // 2. INCIDENT REPORT CONFIGURATION
+            modelBuilder.Entity<IncidentReport>(entity =>
+            {
+                entity.HasKey(ir => ir.ReportId);
 
-            //    // Added Campus Location as requested
-            //    entity.Property(ir => ir.CampusLocation).IsRequired().HasMaxLength(150);
+                // Added Campus Location as requested
+                entity.Property(ir => ir.CampusLocation).IsRequired().HasMaxLength(150);
 
-            //    entity.Property(ir => ir.Title).IsRequired().HasMaxLength(150);
-            //    entity.Property(ir => ir.Description).IsRequired().HasMaxLength(500); // SRS Requirement
-            //    entity.Property(ir => ir.ImagePath).HasMaxLength(255); // For JPG/PNG evidence
+                entity.Property(ir => ir.Title).IsRequired().HasMaxLength(150);
+                entity.Property(ir => ir.Description).IsRequired().HasMaxLength(500); // SRS Requirement
+                entity.Property(ir => ir.ImagePath).HasMaxLength(255); // For JPG/PNG evidence
 
-            //    // Enums: Status (Pending, Accepted, In-Progress, Resolved, Rejected)
-            //    entity.Property(ir => ir.Status).HasConversion<string>().IsRequired();
+                // Enums: Status (Pending, Accepted, In-Progress, Resolved, Rejected)
+                entity.Property(ir => ir.Status).HasConversion<string>().IsRequired();
 
-            //    entity.HasOne(ir => ir.User)
-            //          .WithMany()
-            //          .HasForeignKey(ir => ir.UserId)
-            //          .OnDelete(DeleteBehavior.Restrict);
-            //});
+                entity.HasOne(ir => ir.User)
+                      .WithMany()
+                      .HasForeignKey(ir => ir.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
 
             //// 3. LOST AND FOUND CONFIGURATION
             //modelBuilder.Entity<LostFoundItem>(entity =>

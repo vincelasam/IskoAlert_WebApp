@@ -1,3 +1,7 @@
+using IskoAlert_WebApp.Data; 
+using IskoAlert_WebApp.Models.Domain;
+using IskoAlert_WebApp.Models.Domain.Enums;
+using IskoAlert_WebApp.Models.ViewModels.Account;
 using Microsoft.AspNetCore.Mvc;
 using IskoAlert_WebApp.Models.ViewModels.Account; // Import your ViewModel namespace
 
@@ -5,7 +9,14 @@ namespace IskolarAlert.Controllers
 {
     public class AccountController : Controller
     {
-        // GET: /Account/Register
+        private readonly ApplicationDbContext _context;
+
+        // Constructor: Database Access
+        public AccountController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -14,22 +25,29 @@ namespace IskolarAlert.Controllers
 
         // POST: /Account/Register
         [HttpPost]
-        public IActionResult Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            // Validates the fields based on your RegisterViewModel annotations (Regex, Required, etc.)
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(model); // Return the view with validation errors if any
-            }
+                // MAPPING: Convert ViewModel to Domain Model
+                var newUser = new User(
+                    model.IdNumber,
+                    model.Webmail,
+                    model.Password, 
+                    model.FullName,
+                    UserRole.Student // Default role for registration
+                );
 
-            // TODO: Add logic here to save the user to the database
+                // SAVE TO DB
+                _context.Users.Add(newUser);
+                await _context.SaveChangesAsync();
 
-            // For now, redirect to Login after "successful" registration
-            TempData["SuccessMessage"] = "Registration successful! You may now login.";
-            return RedirectToAction("Login");
+                return RedirectToAction("Login");
+            } 
+            return View(model);
+
         }
 
-        // GET: /Account/Login
         [HttpGet]
         public IActionResult Login()
         {
@@ -55,5 +73,6 @@ namespace IskolarAlert.Controllers
             ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
             return View();
         }
+        
     }
 }
