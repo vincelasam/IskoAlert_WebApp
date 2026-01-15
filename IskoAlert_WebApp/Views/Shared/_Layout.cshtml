@@ -1,3 +1,5 @@
+@model IskoAlert_WebApp.Models.ViewModels.Dashboard.DashboardViewModel
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,8 +39,8 @@
 
                     <div class="flex items-center gap-3 pl-6 border-l border-red-800">
                         <div class="text-right hidden sm:block">
-                            <p class="text-sm font-semibold">Lian Paredes</p>
-                            <p class="text-xs text-yellow-400">Student</p>
+                            <p class="text-sm font-semibold">@Model.FullName</p>
+                            <p class="text-xs text-yellow-400">@Model.Role</p>
                         </div>
                         <div class="h-8 w-8 bg-red-800 rounded-full flex items-center justify-center border border-yellow-400">
                             <i class="fa-regular fa-user text-sm"></i>

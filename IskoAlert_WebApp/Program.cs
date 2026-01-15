@@ -21,6 +21,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         )
     )
 );
+
+// Configure Authentication services
+builder.Services.AddAuthentication("CookieAuth")
+    .AddCookie("CookieAuth", config =>
+    {
+        // Name of the cookie stored in the browser
+        config.Cookie.Name = "UserLoginCookie";
+
+        // Redirect path for unauthorized access
+        config.LoginPath = "/Account/Login";
+    });
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -48,6 +60,12 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// Identifies who the user is
+app.UseAuthentication();
+
+// Determines what the user can access
+app.UseAuthorization();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -70,4 +88,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
+
+
+
 app.Run();
+
+
