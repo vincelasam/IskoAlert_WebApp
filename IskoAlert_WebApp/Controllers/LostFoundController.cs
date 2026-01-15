@@ -6,26 +6,27 @@ namespace IskolarAlert.Controllers
 {
     public class LostFoundController : Controller
     {
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult ReportLostItem()
-        {
-            return View();
-        }
-
+        [HttpGet]
         public IActionResult Details() // details ng mga reports
         {
             return View();
         }
-
+        [HttpGet]
         public IActionResult MyListings() //Listings ng mga reports
         {
             return View();
         }
-    
+        public IActionResult ReportLostItem()
+        {
+            return View();
+        }
+        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
