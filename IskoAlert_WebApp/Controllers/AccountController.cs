@@ -2,9 +2,11 @@
 using IskoAlert_WebApp.Models.Domain;
 using IskoAlert_WebApp.Models.Domain.Enums;
 using IskoAlert_WebApp.Models.ViewModels.Account;
-using Microsoft.AspNetCore.Mvc;
 using IskoAlert_WebApp.Models.ViewModels.Account;
 using IskoAlert_WebApp.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IskolarAlert.Controllers
 {
@@ -63,21 +65,34 @@ namespace IskolarAlert.Controllers
             {
                 var user = await _userService.ValidateCredentialsAsync(model.Email, model.Password, Enum.Parse<UserRole>(model.Role));
 
-                if (user == null)
+                if (user != null)
                 {
-                    ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
-                    return View();
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Webmail),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+                    var authProperties = new AuthenticationProperties { IsPersistent = true };
+
+                    await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    if (user.Role == UserRole.Student)
+                        return RedirectToAction("Index", "Home");
+                    else
+                        return RedirectToAction("Index", "Admin");
                 }
 
-                if (user.Role == UserRole.Student)
-                    return RedirectToAction("Index", "Home");
-                else
-                    return RedirectToAction("Index", "Admin");
+                // HETO ANG KULANG: Kapag mali ang credentials (user == null)
+                ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
+                return View(model);
             }
             catch (Exception ex)
             {
                 ViewData["ErrorMessage"] = ex.Message;
-                return View();
+                return View(model); // Siguraduhin na may return din dito
             }
         }
 
