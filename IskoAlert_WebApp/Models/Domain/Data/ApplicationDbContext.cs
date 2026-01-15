@@ -13,7 +13,7 @@ namespace IskoAlert_WebApp.Data
         // --- Core Tables based on SRS Documentation ---
         public DbSet<User> Users { get; set; }
         public DbSet<IncidentReport> IncidentReports { get; set; }
-        //public DbSet<LostFoundItem> LostAndFoundItems { get; set; }
+        //public DbSet<LostFoundItem> LostFoundItems { get; set; }
         //public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
