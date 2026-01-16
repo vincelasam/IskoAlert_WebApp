@@ -11,5 +11,9 @@ namespace IskolarAlert.Controllers
             return View();
         }
 
+        public IActionResult AdminNotifications()
+        {
+            return View("~/Views/Admin/Notifications.cshtml");
+        }
     }
 }
