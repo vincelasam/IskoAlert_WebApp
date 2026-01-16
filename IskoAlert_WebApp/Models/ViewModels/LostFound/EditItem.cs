@@ -6,6 +6,7 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
 {
     public class EditItem
     {
+        public int UserId { get; set; }
         public int ItemId { get; set; }
         [Required]
         public ItemStatus LostOrFound { get; set; } // for radiobutton if lost or not
