@@ -34,8 +34,8 @@ public class HomeController : Controller
         var inProgressReports = await _context.IncidentReports
             .CountAsync(r => r.UserId == user.UserId && r.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress);
 
-        var lostAndFoundCount = await _context.LostFoundItems
-            .CountAsync(lf => lf.UserId == user.UserId);
+        var lostAndFoundCount = await _context.LostFoundItems.CountAsync();
+            
 
         // 4. Build ViewModel with placeholder numbers
         var dashboardVM = new DashboardViewModel
