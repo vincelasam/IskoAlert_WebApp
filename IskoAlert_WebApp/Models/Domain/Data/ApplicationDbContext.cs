@@ -13,7 +13,7 @@ namespace IskoAlert_WebApp.Data
         // --- Core Tables based on SRS Documentation ---
         public DbSet<User> Users { get; set; }
         public DbSet<IncidentReport> IncidentReports { get; set; }
-        //public DbSet<LostFoundItem> LostFoundItems { get; set; }
+        public DbSet<LostFoundItem> LostFoundItems { get; set; }
         //public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -63,9 +63,9 @@ namespace IskoAlert_WebApp.Data
                 entity.Property(lfi => lfi.Title).IsRequired().HasMaxLength(100);
                 entity.Property(lfi => lfi.Description).HasMaxLength(500);
                 entity.Property(lfi => lfi.Email).IsRequired().HasMaxLength(50);
-                entity.Property(lfi => lfi.LocationFound).IsRequired().HasMaxLength(150);
                 entity.Property(lfi => lfi.ImagePath).HasMaxLength(255);
-                
+                entity.Property(lfi => lfi.LocationFound).HasConversion<string>().IsRequired();
+
                 // Enums: Status (Lost, Found, Claimed), Category
                 entity.Property(lfi => lfi.Status).HasConversion<string>().IsRequired();
                 entity.Property(lfi => lfi.Category).HasConversion<string>().IsRequired();
@@ -73,7 +73,7 @@ namespace IskoAlert_WebApp.Data
                 entity.HasOne(lfi => lfi.User)
                       .WithMany()
                       .HasForeignKey(lfi => lfi.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             //// 4. NOTIFICATION CONFIGURATION
