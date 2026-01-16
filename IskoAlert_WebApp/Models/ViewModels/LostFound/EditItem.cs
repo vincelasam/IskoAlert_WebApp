@@ -29,7 +29,6 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
         [Display(Name = "Upload Image")]
         public IFormFile? ImageFile { get; set; }
 
