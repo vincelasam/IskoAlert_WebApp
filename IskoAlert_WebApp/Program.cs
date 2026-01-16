@@ -14,6 +14,7 @@ builder.Services.AddControllersWithViews();
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICredibilityAnalyzerService, CredibilityAnalyzerService>();
+builder.Services.AddScoped<ILostFoundService, LostFoundService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString, sqlOptions =>
