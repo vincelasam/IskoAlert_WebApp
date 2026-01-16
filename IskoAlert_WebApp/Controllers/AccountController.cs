@@ -100,5 +100,18 @@ namespace IskolarAlert.Controllers
             }
         }
 
+        // GET: /Account/Logout
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            // Sign the user out of the cookie authentication scheme
+            await HttpContext.SignOutAsync("CookieAuth");
+
+            // Optional: clear session data if you’re using it
+            HttpContext.Session.Clear();
+
+            // Redirect to Login page (or home)
+            return RedirectToAction("Login");
+        }
     }
 }
