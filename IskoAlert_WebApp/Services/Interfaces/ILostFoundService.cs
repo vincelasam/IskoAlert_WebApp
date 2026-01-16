@@ -7,7 +7,7 @@ namespace IskoAlert_WebApp.Services.Interfaces
     public interface ILostFoundService
     {
         // Creates a new lost or found item
-        Task CreateLostItemAsync(CreateItem model);
+        Task CreateLostItemAsync(CreateItem model, int userId);
 
         // Retrieves all lost and found items
         Task<List<LostFoundItem>> GetAllItemsAsync(string keyword);
@@ -16,9 +16,10 @@ namespace IskoAlert_WebApp.Services.Interfaces
         Task<List<LostFoundItem>> GetUserItemsAsync(int userId);
         Task<LostFoundItem> GetItemByIdAsync(int itemId);//by id
 
-        // Updates the status of a specific item
-        Task UpdateItemStatusAsync(int itemId, ReportStatus newStatus, int userId);
+        // Edit the item
+        Task UpdateItemAsync(EditItem model, int userId);
 
         Task DeleteItemAsync(int itemId, int userId);
+        Task<string> SaveImageAsync(IFormFile imageFile);
     }
 }
