@@ -7,7 +7,9 @@ namespace IskoAlert_WebApp.Models.Domain
     {
         [Key]
         public int ItemId { get; private set; }
-        public int UserId { get; private set; }
+        public int UserId { get; private set; } // Foreign Key pointing to User.UserId
+        // Navigation Property
+        // This links this report to the User entity in the database
         public User User { get; private set; }
 
         public string Title { get; private set; }
