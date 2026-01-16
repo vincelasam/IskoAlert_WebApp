@@ -1,9 +1,11 @@
 ﻿    using IskoAlert_WebApp.Models.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace IskoAlert_WebApp.Models.Domain
 {
     public class LostFoundItem
     {
+        [Key]
         public int ItemId { get; private set; }
         public int UserId { get; private set; }
         public User User { get; private set; }
@@ -47,10 +49,13 @@ namespace IskoAlert_WebApp.Models.Domain
             Status = newStatus;
         }
 
-        public void Archive()
+        public void Archive(int userId)
         {
             if (Status == ItemStatus.Archived)
                 throw new InvalidOperationException("Item already archived.");
+            if (UserId != userId)
+                throw new UnauthorizedAccessException("You cannot archive this item.");
+
 
             Status = ItemStatus.Archived;
             ArchivedAt = DateTime.UtcNow;
