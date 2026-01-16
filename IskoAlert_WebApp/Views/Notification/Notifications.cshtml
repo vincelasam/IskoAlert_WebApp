@@ -1,5 +1,8 @@
+@model List<IskoAlert_WebApp.Models.ViewModels.NotificationViewModel>
+
 @{
-    ViewData["Title"] = "Notifications"; //gawin nating index
+    ViewData["Title"] = "Notifications";
+    var totalUnread = Model?.FirstOrDefault()?.TotalUnread ?? 0; // for badge
 }
 
 <div class="max-w-4xl mx-auto">
@@ -17,56 +20,60 @@
                     <i class="fa-regular fa-bell text-xl text-[#800000]"></i>
                     <h2 class="text-xl font-bold text-gray-900">Notifications</h2>
                 </div>
-                <p class="text-sm text-gray-500 mt-1">2 unread notifications</p>
+                <p class="text-sm text-gray-500 mt-1">
+                    @if (totalUnread > 0)
+                    {
+                        @($"{totalUnread} unread notification{(totalUnread > 1 ? "s" : "")}")
+                    }
+                    else
+                    {
+                        @("No unread notifications")
+                    }
+                </p>
             </div>
 
-            <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
-                <i class="fa-solid fa-check-double text-gray-400"></i>
-                Mark all as read
-            </button>
+            <form asp-action="MarkAllAsRead" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit"
+                        class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <i class="fa-solid fa-check-double text-gray-400"></i>
+                    Mark all as read
+                </button>
+            </form>
+
         </div>
 
         <div class="p-6 space-y-4">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var notif in Model)
+                {
+                    var isNew = !notif.IsRead;
+                    var bgColor = isNew ? "bg-yellow-50 border-yellow-200" : "bg-white border-gray-200";
+                    var iconColor = isNew ? "text-yellow-500" : "text-gray-400";
 
-            <div class="flex gap-4 p-4 rounded-lg border border-yellow-200 bg-yellow-50">
-                <div class="flex-shrink-0 mt-1">
-                    <i class="fa-solid fa-bell text-yellow-500 text-xl"></i>
-                </div>
-                <div class="flex-grow">
-                    <div class="flex justify-between items-start">
-                        <h3 class="font-bold text-gray-900">Report Status Updated</h3>
-                        <span class="bg-yellow-400 text-[#800000] text-[10px] font-bold px-2 py-0.5 rounded">New</span>
+                    <div class="flex gap-4 p-4 rounded-lg border @bgColor">
+                        <div class="flex-shrink-0 mt-1">
+                            <i class="fa-solid fa-bell @iconColor text-xl"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-bold text-gray-900">@(!string.IsNullOrEmpty(notif.IncidentReportTitle) ? notif.IncidentReportTitle : notif.LostFoundItemTitle ?? "Notification")</h3>
+                                @if (isNew)
+                                {
+                                    <span class="bg-yellow-400 text-[#800000] text-[10px] font-bold px-2 py-0.5 rounded">New</span>
+                                }
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">@notif.Message</p>
+                            <p class="text-xs text-gray-400 mt-2">@notif.CreatedAt.ToString("MM/dd/yyyy, h:mm:ss tt")</p>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600 mt-1">Your incident report #IR-2025-001 status has been updated to "In-Progress"</p>
-                    <p class="text-xs text-gray-400 mt-2">12/22/2024, 2:20:00 PM</p>
-                </div>
-            </div>
-
-            <div class="flex gap-4 p-4 rounded-lg border border-gray-200 bg-white">
-                <div class="flex-shrink-0 mt-1">
-                    <i class="fa-solid fa-bell text-gray-400 text-xl"></i>
-                </div>
-                <div class="flex-grow">
-                    <h3 class="font-bold text-gray-900">Report Resolved</h3>
-                    <p class="text-sm text-gray-600 mt-1">Your incident report #IR-2025-002 has been resolved.</p>
-                    <p class="text-xs text-gray-400 mt-2">12/19/2024, 4:30:00 PM</p>
-                </div>
-            </div>
-
-            <div class="flex gap-4 p-4 rounded-lg border border-yellow-200 bg-yellow-50">
-                <div class="flex-shrink-0 mt-1">
-                    <i class="fa-solid fa-bell text-yellow-500 text-xl"></i>
-                </div>
-                <div class="flex-grow">
-                    <div class="flex justify-between items-start">
-                        <h3 class="font-bold text-gray-900">New Lost Item Match</h3>
-                        <span class="bg-yellow-400 text-[#800000] text-[10px] font-bold px-2 py-0.5 rounded">New</span>
-                    </div>
-                    <p class="text-sm text-gray-600 mt-1">A new found item matches your search criteria.</p>
-                    <p class="text-xs text-gray-400 mt-2">12/21/2024, 11:00:00 AM</p>
-                </div>
-            </div>
-
+                }
+            }
+            else
+            {
+                <p class="text-gray-500 text-center">No notifications to show.</p>
+            }
         </div>
     </div>
 </div>

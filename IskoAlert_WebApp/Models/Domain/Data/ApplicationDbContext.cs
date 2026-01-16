@@ -14,7 +14,7 @@ namespace IskoAlert_WebApp.Data
         public DbSet<User> Users { get; set; }
         public DbSet<IncidentReport> IncidentReports { get; set; }
         public DbSet<LostFoundItem> LostFoundItems { get; set; }
-        //public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -92,21 +92,33 @@ namespace IskoAlert_WebApp.Data
                 .Property(i => i.IncidentType)
                 .HasConversion<string>(); // Recommended if you want types like "Theft" readable in DB
 
-            //// 4. NOTIFICATION CONFIGURATION
-            //modelBuilder.Entity<Notification>(entity =>
-            //{
-            //    entity.HasKey(n => n.NotificationId);
-            //    entity.Property(n => n.Message).IsRequired().HasMaxLength(255);
-            //    entity.Property(n => n.CreatedAt).IsRequired();
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasKey(n => n.NotificationId);
 
-            //    // Enum: Notification Type
-            //    entity.Property(n => n.Type).HasConversion<string>().IsRequired();
+                
+                entity.Property(n => n.Message).IsRequired().HasMaxLength(255);
+                entity.Property(n => n.CreatedAt).IsRequired();
 
-            //    entity.HasOne(n => n.User)
-            //          .WithMany()
-            //          .HasForeignKey(n => n.UserId)
-            //          .OnDelete(DeleteBehavior.Cascade);
-            //});
+           
+
+                entity.HasOne(n => n.User)
+                      .WithMany()
+                      .HasForeignKey(n => n.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+             
+                entity.HasOne(n => n.IncidentReport)
+                      .WithMany()
+                      .HasForeignKey(n => n.IncidentReportId)
+                      .OnDelete(DeleteBehavior.SetNull); // Keep notif even if report is archived
+
+            
+                entity.HasOne(n => n.LostFoundItem)
+                      .WithMany()
+                      .HasForeignKey(n => n.LostFoundItemId)
+                      .OnDelete(DeleteBehavior.Cascade); // Auto-delete notif if item expires (30 days) [cite: 135]
+            });
         }
     }
 }

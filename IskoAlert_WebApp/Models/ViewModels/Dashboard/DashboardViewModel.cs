@@ -11,6 +11,6 @@ namespace IskoAlert_WebApp.Models.ViewModels.Dashboard
         public int InProgressReports { get; set; }
         public int LostAndFoundCount { get; set; }
 
-        //public List<Notification> RecentNotifications { get; set; }
+        public List<NotificationViewModel> RecentNotifications { get; set; } = new();
     }
 }
