@@ -72,14 +72,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseSession();
-
-// Identifies who the user is
-app.UseAuthentication();
-
-// Determines what the user can access
-app.UseAuthorization();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -92,10 +84,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthentication(); // Checks "Who are you?" (Cookies)
 app.UseAuthorization();  // Checks "Allowed to be here?" (Roles)
-
 
 // Default route: Landing page first, then users can navigate to Login
 app.MapControllerRoute(

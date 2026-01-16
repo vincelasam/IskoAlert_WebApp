@@ -6,6 +6,7 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
 {
     public class EditItem
     {
+        public int UserId { get; set; }
         public int ItemId { get; set; }
         [Required]
         public ItemStatus LostOrFound { get; set; } // for radiobutton if lost or not
@@ -28,7 +29,6 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
         [Display(Name = "Upload Image")]
         public IFormFile? ImageFile { get; set; }
 

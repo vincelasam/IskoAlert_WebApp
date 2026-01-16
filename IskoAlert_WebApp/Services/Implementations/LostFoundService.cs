@@ -71,19 +71,44 @@ namespace IskoAlert_WebApp.Services.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<LostFoundItem>> GetAllItemsAsync(string keyword)
+        public async Task<List<LostFoundItem>> GetAllItemsAsync(string? keyword, string? status = null)
         {
             var query = _context.LostFoundItems
                 .AsNoTracking()
                 .Where(i => i.ArchivedAt == null)
                 .AsQueryable();
 
+            // Filter by status if provided
+            if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<ItemStatus>(status, out var statusEnum))
+            {
+                query = query.Where(i => i.Status == statusEnum);
+            }
+
+            // Search by keyword
             if (!string.IsNullOrWhiteSpace(keyword))
             {
+                var keywordLower = keyword.ToLower();
+
+                // Search in Title and Description
                 query = query.Where(i =>
                     EF.Functions.Like(i.Title, $"%{keyword}%") ||
                     EF.Functions.Like(i.Description, $"%{keyword}%")
                 );
+
+                var matchingLocations = Enum.GetValues(typeof(CampusLocation))
+                    .Cast<CampusLocation>()
+                    .Where(loc => loc.ToString().Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                if (matchingLocations.Any())
+                {
+                    var locationQuery = query.Where(i => matchingLocations.Contains(i.LocationFound));
+                    query = query.Where(i =>
+                        EF.Functions.Like(i.Title, $"%{keyword}%") ||
+                        EF.Functions.Like(i.Description, $"%{keyword}%") ||
+                        matchingLocations.Contains(i.LocationFound)
+                    );
+                }
             }
 
             query = query.OrderByDescending(i => i.DatePosted);
@@ -91,12 +116,20 @@ namespace IskoAlert_WebApp.Services.Implementations
             return await query.ToListAsync();
         }
 
-        public async Task<List<LostFoundItem>> GetUserItemsAsync(int userId)
+        public async Task<List<LostFoundItem>> GetUserItemsAsync(int userId, bool includeArchived = false)
         {
-            return await _context.LostFoundItems
-                   .Where(i => i.UserId == userId && i.ArchivedAt == null)
-                   .OrderByDescending(i => i.DatePosted)
-                   .ToListAsync();
+            var query = _context.LostFoundItems
+                .Where(i => i.UserId == userId)
+                .AsQueryable();
+
+            if (!includeArchived)
+            {
+                query = query.Where(i => i.ArchivedAt == null);
+            }
+
+            return await query
+                .OrderByDescending(i => i.DatePosted)
+                .ToListAsync();
         }
 
         public async Task<LostFoundItem?> GetItemByIdAsync(int itemId)
@@ -104,7 +137,7 @@ namespace IskoAlert_WebApp.Services.Implementations
             return await _context.LostFoundItems.FirstOrDefaultAsync(x => x.ItemId == itemId);
         }
 
-        public async Task DeleteItemAsync(int itemId, int userId)
+        public async Task ArchiveItemAsync(int itemId, int userId)
         {
             // Fetch the item from the database
             var item = await _context.LostFoundItems

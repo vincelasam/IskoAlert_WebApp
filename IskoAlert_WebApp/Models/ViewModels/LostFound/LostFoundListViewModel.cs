@@ -1,4 +1,5 @@
-﻿using IskoAlert_WebApp.Models.Domain.Enums;
+﻿using IskoAlert_WebApp.Models.Domain;
+using IskoAlert_WebApp.Models.Domain.Enums;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IskoAlert_WebApp.Models.ViewModels.LostFound
@@ -7,6 +8,7 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
     {
         // SEARCH / FILTER FIELDS
         public string? SearchKeyword { get; set; }
+        public List<LostFoundItemDisplayViewModel> Items { get; set; } = new List<LostFoundItemDisplayViewModel>();
 
         public ItemStatus? SelectedStatus { get; set; }   // Lost / Found
 
@@ -15,10 +17,5 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
         // Dropdown source
         public IEnumerable<SelectListItem> CampusLocations { get; set; }
             = new List<SelectListItem>();
-
-        // RESULTS (READ-ONLY)
-         
-        public List<LostFoundItemDisplayViewModel> Items { get; set; }
-            = new();
     }
 }

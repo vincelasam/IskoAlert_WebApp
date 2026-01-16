@@ -65,10 +65,12 @@ namespace IskoAlert_WebApp.Data
                 entity.Property(lfi => lfi.Title).IsRequired().HasMaxLength(100);
                 entity.Property(lfi => lfi.Description).HasMaxLength(500);
                 entity.Property(lfi => lfi.Email).IsRequired().HasMaxLength(50);
-                entity.Property(lfi => lfi.LocationFound).IsRequired().HasMaxLength(150);
+
+                // Add HasConversion<string>() for LocationFound enum
+                entity.Property(lfi => lfi.LocationFound).HasConversion<string>().IsRequired().HasMaxLength(150);
                 entity.Property(lfi => lfi.ImagePath).HasMaxLength(255);
 
-                // Enums: Status (Lost, Found, Claimed), Category
+                // Enums: Status (Lost, Found, Archived), Category
                 entity.Property(lfi => lfi.Status).HasConversion<string>().IsRequired();
                 entity.Property(lfi => lfi.Category).HasConversion<string>().IsRequired();
 
