@@ -1,5 +1,6 @@
+@model IskoAlert_WebApp.Models.ViewModels.IncidentReport.IncidentReportViewModel
 @{
-    ViewData["Title"] = "Report Incident"; // need natin irename ng Create
+    ViewData["Title"] = "Report Incident";
 }
 
 <div class="max-w-3xl mx-auto">
@@ -16,66 +17,112 @@
             <p class="text-sm text-gray-500 mt-1">Provide details about the incident you wish to report</p>
         </div>
 
-        <form class="space-y-6">
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Incident Type <span class="text-red-500">*</span></label>
-                <div class="relative">
-                    <select class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
-                        <option>Theft</option>
-                        <option>Vandalism</option>
-                        <option>Harassment</option>
-                        <option>Property Damage</option>
-                        <option>Safety Hazard</option>
-                        <option>Other</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                        <i class="fa-solid fa-chevron-down text-xs"></i>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="p-4 mb-6 bg-red-50 border-l-4 border-red-500 rounded">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fa-solid fa-circle-exclamation text-red-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Please correct the following errors:</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
+        }
+
+        <form asp-action="ReportIncident" asp-controller="IncidentReport" method="post" enctype="multipart/form-data" class="space-y-6">
+            @Html.AntiForgeryToken()
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Location <span class="text-red-500">*</span></label>
+                <label asp-for="IncidentType" class="block text-sm font-semibold text-gray-700 mb-1">Incident Type <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <select class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
-                        <option value="" disabled selected>Select location</option>
-                        <option>Main Building - West Wing</option>
-                        <option>Main Building - East Wing</option>
-                        <option>Main Building - South Wing</option>
-                        <option>Main Building - North Wing</option>
-                        <option>Lagoon Area</option>
-                        <option>Track Oval</option>
-                        <option>Gymnasium</option>
-                        <option>Library</option>
-                        <option>Canteen</option>
+                    <select asp-for="IncidentType" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
+                        <option value="">Select incident type</option>
+                        <option value="@IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Accident">Accident</option>
+                        <option value="@IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Hazard">Hazard</option>
+                        <option value="@IskoAlert_WebApp.Models.Domain.Enums.IncidentType.MedicalEmergency">Medical Emergency</option>
+                        <option value="@IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Theft">Theft</option>
+                        <option value="@IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Others">Others</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                         <i class="fa-solid fa-chevron-down text-xs"></i>
                     </div>
                 </div>
+                <span asp-validation-for="IncidentType" class="text-red-500 text-xs mt-1"></span>
+            </div>
+
+            <div>
+                <label asp-for="Title" class="block text-sm font-semibold text-gray-700 mb-1">Incident Title <span class="text-red-500">*</span></label>
+                <input asp-for="Title"
+                       type="text"
+                       placeholder="Brief title of the incident"
+                       class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block w-full p-3" />
+                <span asp-validation-for="Title" class="text-red-500 text-xs mt-1"></span>
+            </div>
+
+            <div>
+                <label asp-for="CampusLocation" class="block text-sm font-semibold text-gray-700 mb-1">Location <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <select asp-for="CampusLocation" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
+                        <option value="">Select location</option>
+                        <option value="Main Building - West Wing">Main Building - West Wing</option>
+                        <option value="Main Building - East Wing">Main Building - East Wing</option>
+                        <option value="Main Building - South Wing">Main Building - South Wing</option>
+                        <option value="Main Building - North Wing">Main Building - North Wing</option>
+                        <option value="Lagoon Area">Lagoon Area</option>
+                        <option value="Track Oval">Track Oval</option>
+                        <option value="Gymnasium">Gymnasium</option>
+                        <option value="Library">Library</option>
+                        <option value="Canteen">Canteen</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </div>
+                </div>
+                <span asp-validation-for="CampusLocation" class="text-red-500 text-xs mt-1"></span>
                 <p class="text-xs text-gray-500 mt-1.5">Select the PUP Main Campus building or area where the incident occurred</p>
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
-                <textarea rows="4"
-                          placeholder="Please provide a detailed description of the incident..."
+                <label asp-for="Description" class="block text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
+                <textarea asp-for="Description"
+                          rows="4"
+                          placeholder="Please provide a detailed description of what happened..."
                           class="block w-full p-3 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-200 focus:ring-[#800000] focus:border-[#800000]"></textarea>
+                <span asp-validation-for="Description" class="text-red-500 text-xs mt-1"></span>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Photo (Optional)</label>
                 <div class="flex items-center justify-center w-full">
-                    <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <label for="imageFile" class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6" id="uploadPrompt">
                             <i class="fa-solid fa-arrow-up-from-bracket text-2xl text-gray-400 mb-3"></i>
                             <p class="mb-1 text-sm font-bold text-[#800000]">Choose a file</p>
                             <p class="text-sm text-gray-500">or drag and drop</p>
                             <p class="text-xs text-gray-400 mt-1">PNG, JPG up to 2MB</p>
                         </div>
-                        <input id="dropzone-file" type="file" class="hidden" />
+                        <input id="imageFile" name="imageFile" type="file" accept=".jpg,.jpeg,.png" class="hidden" />
                     </label>
+                </div>
+                <!-- RESTORED: File upload confirmation message -->
+                <div id="fileConfirmation" class="hidden mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-green-600"></i>
+                        <span class="text-sm font-medium text-green-700" id="fileName"></span>
+                    </div>
+                    <button type="button" id="removeFile" class="mt-2 text-xs text-red-600 hover:text-red-700 font-medium">
+                        <i class="fa-solid fa-xmark"></i> Remove file
+                    </button>
                 </div>
             </div>
 
@@ -84,7 +131,7 @@
                     Cancel
                 </a>
 
-                <button type="button" class="w-full py-3 px-5 text-sm font-semibold text-white bg-[#800000] rounded-lg hover:bg-red-900 transition-colors shadow-sm">
+                <button type="submit" class="w-full py-3 px-5 text-sm font-semibold text-white bg-[#800000] rounded-lg hover:bg-red-900 transition-colors shadow-sm">
                     Submit Report
                 </button>
             </div>
@@ -92,3 +139,62 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // RESTORED AND ENHANCED: File upload confirmation with visual feedback
+        const fileInput = document.getElementById('imageFile');
+        const fileConfirmation = document.getElementById('fileConfirmation');
+        const fileName = document.getElementById('fileName');
+        const uploadPrompt = document.getElementById('uploadPrompt');
+        const removeFileBtn = document.getElementById('removeFile');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                // Show confirmation box
+                fileConfirmation.classList.remove('hidden');
+
+                // Display file name with icon
+                fileName.textContent = `File selected: ${file.name}`;
+
+                // Optional: Validate file size and type
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                const maxSize = 2 * 1024 * 1024; // 2MB
+
+                if (!validTypes.includes(file.type)) {
+                    fileName.textContent = `Invalid file type: ${file.name}`;
+                    fileConfirmation.classList.remove('bg-green-50', 'border-green-200');
+                    fileConfirmation.classList.add('bg-red-50', 'border-red-200');
+                    fileName.classList.remove('text-green-700');
+                    fileName.classList.add('text-red-700');
+                } else if (file.size > maxSize) {
+                    fileName.textContent = `File too large: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
+                    fileConfirmation.classList.remove('bg-green-50', 'border-green-200');
+                    fileConfirmation.classList.add('bg-red-50', 'border-red-200');
+                    fileName.classList.remove('text-green-700');
+                    fileName.classList.add('text-red-700');
+                } else {
+                    // Valid file
+                    fileConfirmation.classList.remove('bg-red-50', 'border-red-200');
+                    fileConfirmation.classList.add('bg-green-50', 'border-green-200');
+                    fileName.classList.remove('text-red-700');
+                    fileName.classList.add('text-green-700');
+                }
+            } else {
+                // No file selected
+                fileConfirmation.classList.add('hidden');
+            }
+        });
+
+        // Remove file functionality
+        removeFileBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            fileConfirmation.classList.add('hidden');
+        });
+    </script>
+}

@@ -1,6 +1,8 @@
 using IskoAlert_WebApp.Data;
 using IskoAlert_WebApp.Models.Domain;
+using IskoAlert_WebApp.Models.Domain.Enums;
 using IskoAlert_WebApp.Models.ViewModels.IncidentReport;
+using IskoAlert_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -8,23 +10,26 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IskoAlert_WebApp.Controllers
 {
-    [Authorize] // Restrict access to users with valid university webmail credentials
+    [Authorize]
     public class IncidentReportController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICredibilityAnalyzerService _credibilityAnalyzer;
 
-        public IncidentReportController(ApplicationDbContext context)
+        public IncidentReportController(
+            ApplicationDbContext context,
+            ICredibilityAnalyzerService credibilityAnalyzer)
         {
             _context = context;
+            _credibilityAnalyzer = credibilityAnalyzer;
         }
 
         // GET: /IncidentReport/Index
-        // Displays a list of reports submitted by the logged-in user
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null) return Unauthorized();
+            if (userIdClaim == null) return RedirectToAction("Login", "Account");
 
             int userId = int.Parse(userIdClaim);
 
@@ -34,6 +39,7 @@ namespace IskoAlert_WebApp.Controllers
                 .Select(ir => new IncidentReportListViewModel
                 {
                     ReportId = ir.ReportId,
+                    IncidentType = ir.IncidentType,
                     Title = ir.Title,
                     CampusLocation = ir.CampusLocation,
                     Status = ir.Status,
@@ -52,9 +58,9 @@ namespace IskoAlert_WebApp.Controllers
         }
 
         // POST: /IncidentReport/ReportIncident
-        // Processes the submission of a new incident report
+        // WITH SEMI-AUTOMATION: Analyzes credibility and auto-accepts/rejects
         [HttpPost]
-        [ValidateAntiForgeryToken] // Security: Protect against CSRF attacks
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReportIncident(IncidentReportViewModel model, IFormFile? imageFile)
         {
             if (!ModelState.IsValid) return View(model);
@@ -62,24 +68,52 @@ namespace IskoAlert_WebApp.Controllers
             try
             {
                 var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
+                if (string.IsNullOrEmpty(userIdClaim)) return RedirectToAction("Login", "Account");
                 int userId = int.Parse(userIdClaim);
 
                 string? savedPath = await HandleImageUpload(imageFile);
 
-                // Domain Model creation using Constructor due to private setters
+                // Create incident report
                 var incident = new IncidentReport(
                     userId,
+                    model.IncidentType,
                     model.CampusLocation,
                     model.Title,
                     model.Description,
                     savedPath
                 );
 
+                // SEMI-AUTOMATION: Analyze credibility
+                var analysisResult = _credibilityAnalyzer.AnalyzeReport(incident);
+
+                // Apply analysis results to the report
+                incident.ApplyCredibilityAnalysis(
+                    credibilityScore: analysisResult.CredibilityScore,
+                    isAutoProcessed: !analysisResult.RequiresManualReview,
+                    recommendedStatus: analysisResult.RecommendedAction,
+                    analysisReason: analysisResult.AnalysisReason,
+                    redFlags: analysisResult.RedFlags,
+                    positiveSignals: analysisResult.PositiveSignals
+                );
+
+                // Save to database
                 _context.IncidentReports.Add(incident);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Incident report submitted successfully.";
+                // USER EXPERIENCE: User sees standard success message regardless of automation
+                // They are NOT aware if it was auto-accepted, auto-rejected, or needs review
+
+                if (analysisResult.CredibilityScore < 30)
+                {
+                    // Score < 30 (auto-rejected): Success message with helpful tip
+                    TempData["SuccessMessage"] = "Report submitted for review. Tip: Adding more details and photos helps us respond faster to your report.";
+                }
+                else
+                {
+                    // Score >= 30: Standard success message
+                    TempData["SuccessMessage"] = "Incident report submitted successfully. You can track its status in 'My Reports'.";
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException ex)
@@ -90,12 +124,11 @@ namespace IskoAlert_WebApp.Controllers
         }
 
         // GET: /IncidentReport/ReportDetails/{id}
-        // Displays full details and status of a specific report
         [HttpGet]
         public async Task<IActionResult> ReportDetails(int id)
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
+            if (string.IsNullOrEmpty(userIdClaim)) return RedirectToAction("Login", "Account");
 
             int userId = int.Parse(userIdClaim);
 
@@ -105,12 +138,17 @@ namespace IskoAlert_WebApp.Controllers
                 .Select(ir => new IncidentReportDetailsViewModel
                 {
                     ReportId = ir.ReportId,
+                    IncidentType = ir.IncidentType,
                     Title = ir.Title,
                     Description = ir.Description,
                     CampusLocation = ir.CampusLocation,
                     ImagePath = ir.ImagePath,
                     Status = ir.Status,
                     CreatedAt = ir.CreatedAt,
+                    AcceptedAt = ir.AcceptedAt,
+                    InProgressAt = ir.InProgressAt,
+                    ResolvedAt = ir.ResolvedAt,
+                    RejectedAt = ir.RejectedAt,
                     ReporterName = ir.User.Name,
                     ReporterWebmail = ir.User.Webmail
                 })

@@ -5,13 +5,15 @@ using IskoAlert_WebApp.Services.Implementations;
 using IskoAlert_WebApp.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register services
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ILostFoundService, LostFoundService>();
+builder.Services.AddScoped<ICredibilityAnalyzerService, CredibilityAnalyzerService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString, sqlOptions =>
@@ -45,60 +47,51 @@ builder.Services.AddAuthentication("CookieAuth")
 
 var app = builder.Build();
 
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
 
-   
-    context.Database.EnsureCreated();
+    
+    context.Database.Migrate();
 
-    // Testing
+
     if (!context.Users.Any())
     {
-        context.Users.Add(
-            new User(
-                idNumber: "2021-00001-MN-0",
-                webmail: "admin@iskomail.pup.edu.ph",
-                passwordHash: "TestPassword123",
-                name: "PUP Admin",
-                role: UserRole.Admin
-    )
-);
+      
+        context.Users.Add(new User(
+            idNumber: "2021-00001-MN-0",
+            webmail: "admin@iskolarngbayan.pup.edu.ph",
+            passwordHash: BCrypt.Net.BCrypt.HashPassword("TestPassword123"),
+            name: "PUP Admin",
+            role: UserRole.Admin
+        ));
+
         context.SaveChanges();
-        Console.WriteLine("Seed Data: Test User created successfully!");
     }
 }
-
-
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 
-// FIX: We use the standard 'UseStaticFiles' to ensure images/css load correctly
-app.UseStaticFiles(); 
+app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
 
-// Identifies who the user is
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication(); // Checks "Who are you?" (Cookies)
+app.UseAuthorization();  // Checks "Allowed to be here?" (Roles)
 
 // Default route: Landing page first, then users can navigate to Login
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Landing}/{action=Index}/{id?}");
 
-
 app.Run();
-
-

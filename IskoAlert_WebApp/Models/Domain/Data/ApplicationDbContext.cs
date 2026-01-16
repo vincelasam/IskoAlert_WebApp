@@ -40,6 +40,9 @@ namespace IskoAlert_WebApp.Data
             {
                 entity.HasKey(ir => ir.ReportId);
 
+                // ADDED: IncidentType enum stored as string
+                entity.Property(ir => ir.IncidentType).HasConversion<string>().IsRequired();
+
                 // Added Campus Location as requested
                 entity.Property(ir => ir.CampusLocation).IsRequired().HasMaxLength(150);
 
@@ -76,6 +79,18 @@ namespace IskoAlert_WebApp.Data
                       .HasForeignKey(lfi => lfi.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<IncidentReport>()
+                .Property(i => i.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<IncidentReport>()
+                .Property(i => i.IncidentType)
+                .HasConversion<string>(); // Recommended if you want types like "Theft" readable in DB
 
             //// 4. NOTIFICATION CONFIGURATION
             //modelBuilder.Entity<Notification>(entity =>

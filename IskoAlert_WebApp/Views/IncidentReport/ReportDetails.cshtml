@@ -1,10 +1,11 @@
+@model IskoAlert_WebApp.Models.ViewModels.IncidentReport.IncidentReportDetailsViewModel
 @{
     ViewData["Title"] = "Report Details";
 }
 
 <div class="max-w-6xl mx-auto">
 
-    <a asp-controller="Home" asp-action="MyReports" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#800000] mb-6 transition-colors">
+    <a asp-controller="IncidentReport" asp-action="Index" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#800000] mb-6 transition-colors">
         <i class="fa-solid fa-arrow-left"></i>
         Back to Reports
     </a>
@@ -16,12 +17,60 @@
 
                 <div class="flex justify-between items-start mb-6">
                     <div>
-                        <h2 class="text-xl font-bold text-gray-900">#IR-2025-001</h2>
-                        <p class="text-gray-500 text-sm">Theft</p>
+                        <h2 class="text-xl font-bold text-gray-900">#IR-@Model.ReportId.ToString("D4")</h2>
+                        <p class="text-gray-500 text-sm">
+                            @switch (Model.IncidentType)
+                            {
+                                case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Accident:
+                                    <text>Accident</text>
+                                    break;
+                                case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Hazard:
+                                    <text>Hazard</text>
+                                    break;
+                                case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.MedicalEmergency:
+                                    <text>Medical Emergency</text>
+                                    break;
+                                case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Theft:
+                                    <text>Theft</text>
+                                    break;
+                                case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Others:
+                                    <text>Others</text>
+                                    break;
+                            }
+                        </p>
                     </div>
-                    <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded border border-green-200">
-                        Resolved
-                    </span>
+                    @switch (Model.Status)
+                    {
+                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Pending:
+                            <span class="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded border border-orange-200">
+                                Pending
+                            </span>
+                            break;
+                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Accepted:
+                            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded border border-blue-200">
+                                Accepted
+                            </span>
+                            break;
+                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress:
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded border border-yellow-200">
+                                In-Progress
+                            </span>
+                            break;
+                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Resolved:
+                            <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded border border-green-200">
+                                Resolved
+                            </span>
+                            break;
+                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Rejected:
+                            <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded border border-red-200">
+                                Rejected
+                            </span>
+                            break;
+                    }
+                </div>
+
+                <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-900 mb-2">@Model.Title</h3>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -29,28 +78,30 @@
                         <div class="mt-1"><i class="fa-regular fa-user text-gray-400"></i></div>
                         <div>
                             <p class="text-xs text-gray-500">Reported By</p>
-                            <p class="font-medium text-gray-900">Lian Paredes</p>
+                            <p class="font-medium text-gray-900">@Model.ReporterName</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
                         <div class="mt-1"><i class="fa-solid fa-location-dot text-gray-400"></i></div>
                         <div>
                             <p class="text-xs text-gray-500">Location</p>
-                            <p class="font-medium text-gray-900">Main Library</p>
+                            <p class="font-medium text-gray-900">@Model.CampusLocation</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
                         <div class="mt-1"><i class="fa-regular fa-calendar text-gray-400"></i></div>
                         <div>
                             <p class="text-xs text-gray-500">Date Submitted</p>
-                            <p class="font-medium text-gray-900">12/20/2024, 10:30:00 AM</p>
+                            <p class="font-medium text-gray-900">@Model.CreatedAt.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
                         <div class="mt-1"><i class="fa-regular fa-calendar-check text-gray-400"></i></div>
                         <div>
                             <p class="text-xs text-gray-500">Last Updated</p>
-                            <p class="font-medium text-gray-900">1/6/2026, 3:39:18 PM</p>
+                            <p class="font-medium text-gray-900">
+                                @((Model.ResolvedAt ?? Model.RejectedAt ?? Model.InProgressAt ?? Model.AcceptedAt ?? Model.CreatedAt).AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt"))
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -58,27 +109,36 @@
                 <div class="mb-8">
                     <div class="flex items-center gap-2 mb-2">
                         <i class="fa-regular fa-file-lines text-gray-400"></i>
-                        <h3 class="font-semibold text-gray-900 text-sm">Description</h3>
+                        <h3 class="font-semibold text-gray-900 text-sm">What Happened</h3>
                     </div>
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        Laptop was stolen from my bag at the 3rd floor reading area. The bag was beside me, but I had to use the restroom for a few minutes. When I returned, the laptop was gone. Black Dell Inspiron 15.
+                        @Model.Description
                     </p>
                 </div>
 
-                <div class="bg-gray-50 rounded-lg p-4 mb-8 border border-gray-100">
-                    <h3 class="font-bold text-gray-900 text-sm mb-2">Admin Remarks</h3>
-                    <p class="text-sm text-gray-600">Laptop has been found. Claim at S501.</p>
-                </div>
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-regular fa-image text-gray-400"></i>
+                            <h3 class="font-semibold text-gray-900 text-sm">Evidence Photo</h3>
+                        </div>
+                        <img src="@Model.ImagePath" alt="Incident Evidence" class="rounded-lg border border-gray-200 max-w-full h-auto">
+                    </div>
+                }
 
-                <div class="mb-8">
-                    <p class="text-xs text-gray-500 mb-1">Assigned To</p>
-                    <p class="font-bold text-gray-900">Security Team A</p>
-                </div>
+                @if (Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Resolved)
+                {
+                    <div class="bg-gray-50 rounded-lg p-4 mb-8 border border-gray-100">
+                        <h3 class="font-bold text-gray-900 text-sm mb-2">Admin Remarks</h3>
+                        <p class="text-sm text-gray-600">Issue has been resolved successfully.</p>
+                    </div>
 
-                <button class="w-full py-2.5 border border-[#800000] text-[#800000] font-semibold rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
-                    <i class="fa-regular fa-star"></i>
-                    Rate This Resolution
-                </button>
+                    <button class="w-full py-2.5 border border-[#800000] text-[#800000] font-semibold rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-star"></i>
+                        Rate This Resolution
+                    </button>
+                }
             </div>
         </div>
 
@@ -89,32 +149,61 @@
                 <div class="relative pl-4 border-l-2 border-gray-200 space-y-8">
 
                     <div class="relative">
-                        <div class="absolute -left-[21px] mt-1.5 h-3 w-3 rounded-full bg-gray-400 border-2 border-white"></div>
+                        <div class="absolute -left-[21px] mt-1.5 h-3 w-3 rounded-full @(Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Pending ? "bg-orange-500 border-4 border-white" : "bg-gray-400") border-2 border-white"></div>
                         <span class="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">Pending</span>
-                        <p class="text-xs text-gray-500 mt-1">12/20/2024, 10:30:00 AM</p>
+                        <p class="text-xs text-gray-500 mt-1">@Model.CreatedAt.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
                     </div>
 
-                    <div class="relative">
-                        <div class="absolute -left-[21px] mt-1.5 h-3 w-3 rounded-full bg-gray-400 border-2 border-white"></div>
-                        <span class="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">Accepted</span>
-                        <p class="text-xs text-gray-500 mt-1">12/20/2024, 3:00:00 PM</p>
-                        <p class="text-xs text-gray-400 italic mt-0.5">"Report received and verified"</p>
-                    </div>
+                    @if (Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Accepted ||
+                                        Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress ||
+                                        Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Resolved)
+                    {
+                        <div class="relative">
+                            <div class="absolute -left-[21px] mt-1.5 h-3 w-3 rounded-full @(Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Accepted ? "bg-blue-500 border-4 border-white" : "bg-gray-400") border-2 border-white"></div>
+                            <span class="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">Accepted</span>
+                            <p class="text-xs text-gray-500 mt-1">
+                                @(Model.AcceptedAt?.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt") ?? "Verified")
+                            </p>
+                            <p class="text-xs text-gray-400 italic mt-0.5">"Report received and verified"</p>
+                        </div>
+                    }
 
-                    <div class="relative">
-                        <div class="absolute -left-[21px] mt-1.5 h-3 w-3 rounded-full bg-gray-400 border-2 border-white"></div>
-                        <span class="bg-yellow-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">In-Progress</span>
-                        <p class="text-xs text-gray-500 mt-1">12/22/2024, 2:20:00 PM</p>
-                        <p class="text-xs text-gray-400 italic mt-0.5">"Investigation ongoing"</p>
-                    </div>
+                    @if (Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress ||
+                                        Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Resolved)
+                    {
+                        <div class="relative">
+                            <div class="absolute -left-[21px] mt-1.5 h-3 w-3 rounded-full @(Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress ? "bg-yellow-500 border-4 border-white" : "bg-gray-400") border-2 border-white"></div>
+                            <span class="bg-yellow-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">In-Progress</span>
+                            <p class="text-xs text-gray-500 mt-1">
+                                @(Model.InProgressAt?.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt") ?? "Processing")
+                            </p>
+                            <p class="text-xs text-gray-400 italic mt-0.5">"Investigation ongoing"</p>
+                        </div>
+                    }
 
-                    <div class="relative">
-                        <div class="absolute -left-[23px] mt-1 h-4 w-4 rounded-full border-4 border-[#800000] bg-white"></div>
-                        <span class="bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Resolved</span>
-                        <p class="text-xs text-gray-500 mt-1">1/6/2026, 3:39:18 PM</p>
-                        <p class="text-xs text-gray-400 italic mt-0.5">"Laptop has been found. Claim at S501."</p>
-                    </div>
+                    @if (Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Resolved)
+                    {
+                        <div class="relative">
+                            <div class="absolute -left-[23px] mt-1 h-4 w-4 rounded-full border-4 border-[#800000] bg-white"></div>
+                            <span class="bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Resolved</span>
+                            <p class="text-xs text-gray-500 mt-1">
+                                @(Model.ResolvedAt?.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt") ?? DateTime.UtcNow.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt"))
+                            </p>
+                            <p class="text-xs text-gray-400 italic mt-0.5">"Issue has been resolved."</p>
+                        </div>
+                    }
 
+                    @if (Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Rejected)
+                    {
+                        <div class="relative">
+                            <div class="absolute -left-[23px] mt-1 h-4 w-4 rounded-full border-4 border-red-600 bg-white"></div>
+                            <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Rejected</span>
+                            <p class="text-xs text-gray-500 mt-1">
+                                @(Model.RejectedAt?.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt") ?? DateTime.Now.ToString("MM/dd/yyyy, hh:mm:ss tt"))
+                            </p>
+                            <p class="text-xs text-gray-400 italic mt-0.5">"Report could not be verified."</p>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

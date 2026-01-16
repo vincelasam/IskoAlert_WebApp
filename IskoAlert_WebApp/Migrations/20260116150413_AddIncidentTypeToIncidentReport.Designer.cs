@@ -4,6 +4,7 @@ using IskoAlert_WebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IskoAlert_WebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260116150413_AddIncidentTypeToIncidentReport")]
+    partial class AddIncidentTypeToIncidentReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,9 +33,6 @@ namespace IskoAlert_WebApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"));
 
-                    b.Property<DateTime?>("AcceptedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("AnalysisReason")
                         .HasColumnType("nvarchar(max)");
 
@@ -45,7 +45,9 @@ namespace IskoAlert_WebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CredibilityScore")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -56,27 +58,16 @@ namespace IskoAlert_WebApp.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<DateTime?>("InProgressAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("IncidentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsAutoProcessed")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("PositiveSignals")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RedFlags")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("RejectedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ResolvedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -95,65 +86,6 @@ namespace IskoAlert_WebApp.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("IncidentReports");
-                });
-
-            modelBuilder.Entity("IskoAlert_WebApp.Models.Domain.LostFoundItem", b =>
-                {
-                    b.Property<int>("ItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemId"));
-
-                    b.Property<DateTime?>("ArchivedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DateEdited")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DatePosted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("LocationFound")
-                        .HasMaxLength(150)
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ItemId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("LostFoundItems");
                 });
 
             modelBuilder.Entity("IskoAlert_WebApp.Models.Domain.User", b =>
@@ -210,17 +142,6 @@ namespace IskoAlert_WebApp.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("IskoAlert_WebApp.Models.Domain.LostFoundItem", b =>
-                {
-                    b.HasOne("IskoAlert_WebApp.Models.Domain.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
