@@ -83,10 +83,10 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-// FIX: This sets the startup page to Account/Login
+// Default route: Landing page first, then users can navigate to Login
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=Landing}/{action=Index}/{id?}");
 
 
 
