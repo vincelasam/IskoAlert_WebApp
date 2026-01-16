@@ -20,23 +20,12 @@ namespace IskoAlert_WebApp.Services.Implementations
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task CreateLostItemAsync(CreateItem model)
+        public async Task CreateLostItemAsync(CreateItem model, int userId)
         {
-            var photo = model.ImageFile;
-            if (photo == null || photo.Length == 0)
-                throw new ArgumentException("Image is required.");
-            
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(photo.FileName)}";
-            var path = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/items", fileName);
-
-            using (var stream = new FileStream(path, FileMode.Create))
-            {
-                await photo.CopyToAsync(stream);
-            }
-
-            string imagePath = $"/uploads/items/{fileName}";
+            string imagePath = await SaveImageAsync(model.ImageFile); 
 
             var newItem = new LostFoundItem(
+                userId: userId,
                 title: model.Title,
                 description: model.Description,
                 status: model.LostOrFound,
@@ -51,25 +40,49 @@ namespace IskoAlert_WebApp.Services.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateItemStatusAsync(int itemId, ReportStatus newStatus, int userId)
+        public async Task UpdateItemAsync(EditItem model, int userId)
         {
+            var item = await _context.LostFoundItems
+              .FirstOrDefaultAsync(x => x.ItemId == model.ItemId);
+            // Check if item exists
+            if (item == null)
+                throw new KeyNotFoundException("Item not found.");
 
-            throw new NotImplementedException();
+            string imagePath = item.ImagePath;
+            if (model.ImageFile != null)
+            {
+                imagePath = await SaveImageAsync(model.ImageFile);
+            }
+
+            // Check if the current user is allowed to archive it
+            if (item.UserId != userId)
+                throw new UnauthorizedAccessException("You cannot archive this item.");
+
+            item.Update(
+                title: model.Title,
+                description: model.Description,
+                status: model.LostOrFound,
+                email: model.Email,
+                location: model.SelectedCampusLocation,
+                category: model.SelectedCategory,
+                image: imagePath
+                );
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<LostFoundItem>> GetAllItemsAsync(string keyword)
         {
             var query = _context.LostFoundItems
-                       .Where(i => i.ArchivedAt == null)
-                       .AsQueryable();
+                .AsNoTracking()
+                .Where(i => i.ArchivedAt == null)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                var lowerKeyword = keyword.ToLower();
-
                 query = query.Where(i =>
-                    i.Title.ToLower().Contains(lowerKeyword) ||
-                    i.Description.ToLower().Contains(lowerKeyword)
+                    EF.Functions.Like(i.Title, $"%{keyword}%") ||
+                    EF.Functions.Like(i.Description, $"%{keyword}%")
                 );
             }
 
@@ -99,7 +112,7 @@ namespace IskoAlert_WebApp.Services.Implementations
 
             // Check if item exists
             if (item == null)
-                throw new Exception("Item not found.");
+                throw new KeyNotFoundException("Item not found.");
 
             // Check if the current user is allowed to archive it
             if (item.UserId != userId)
@@ -108,6 +121,29 @@ namespace IskoAlert_WebApp.Services.Implementations
             item.Archive(userId);
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<string> SaveImageAsync(IFormFile imageFile)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+                throw new ArgumentException("Image is required.");
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+            var uploadsPath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/items");
+
+            if (!Directory.Exists(uploadsPath))
+            {
+                Directory.CreateDirectory(uploadsPath);
+            }
+
+            var path = Path.Combine(uploadsPath, fileName);
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
+
+            return $"/uploads/items/{fileName}";
         }
     }
 
