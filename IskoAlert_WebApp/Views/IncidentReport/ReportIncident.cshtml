@@ -17,75 +17,169 @@
             <p class="text-sm text-gray-500 mt-1">Provide details about the incident you wish to report</p>
         </div>
 
+        @* Display validation summary for any errors *@
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-exclamation text-red-600 mt-0.5"></i>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-semibold text-red-800 mb-1">Please correct the following errors:</h3>
+                        <div asp-validation-summary="All" class="text-xs text-red-600"></div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* Display success/info messages from TempData *@
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-green-600 mt-0.5"></i>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-green-800">@TempData["SuccessMessage"]</p>
+                        @if (TempData["SuccessDetails"] != null)
+                        {
+                            <p class="text-xs text-green-600 mt-1">@TempData["SuccessDetails"]</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (TempData["WarningMessage"] != null)
+        {
+            <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-yellow-800">@TempData["WarningMessage"]</p>
+                        @if (TempData["WarningDetails"] != null)
+                        {
+                            <p class="text-xs text-yellow-600 mt-1">@TempData["WarningDetails"]</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (TempData["InfoMessage"] != null)
+        {
+            <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-info text-blue-600 mt-0.5"></i>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-blue-800">@TempData["InfoMessage"]</p>
+                        @if (TempData["InfoDetails"] != null)
+                        {
+                            <p class="text-xs text-blue-600 mt-1">@TempData["InfoDetails"]</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
         <form asp-action="ReportIncident" method="post" enctype="multipart/form-data" class="space-y-6">
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Incident Type <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                    Incident Type <span class="text-red-500">*</span>
+                </label>
                 <div class="relative">
-                    <select asp-for="Title" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
-                        <option>Theft</option>
-                        <option>Vandalism</option>
-                        <option>Harassment</option>
-                        <option>Property Damage</option>
-                        <option>Safety Hazard</option>
-                        <option>Other</option>
+                    <select asp-for="Title"
+                            class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
+                        <option value="">Select Type</option>
+                        <option value="Theft">Theft</option>
+                        <option value="Vandalism">Vandalism</option>
+                        <option value="Harassment">Harassment</option>
+                        <option value="Property Damage">Property Damage</option>
+                        <option value="Safety Hazard">Safety Hazard</option>
+                        <option value="Other">Other</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                         <i class="fa-solid fa-chevron-down text-xs"></i>
                     </div>
                 </div>
+                <span asp-validation-for="Title" class="text-red-500 text-xs mt-1 block"></span>
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Location <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                    Location <span class="text-red-500">*</span>
+                </label>
                 <div class="relative">
-                    <select asp-for="CampusLocation" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
-                        <option value="" disabled selected>Select location</option>
-                        <option>Main Building - West Wing</option>
-                        <option>Main Building - East Wing</option>
-                        <option>Main Building - South Wing</option>
-                        <option>Main Building - North Wing</option>
-                        <option>Lagoon Area</option>
-                        <option>Track Oval</option>
-                        <option>Gymnasium</option>
-                        <option>Library</option>
-                        <option>Canteen</option>
+                    <select asp-for="CampusLocation"
+                            class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
+                        <option value="">Select location</option>
+                        <option value="Main Building - West Wing">Main Building - West Wing</option>
+                        <option value="Main Building - East Wing">Main Building - East Wing</option>
+                        <option value="Main Building - South Wing">Main Building - South Wing</option>
+                        <option value="Main Building - North Wing">Main Building - North Wing</option>
+                        <option value="Lagoon Area">Lagoon Area</option>
+                        <option value="Track Oval">Track Oval</option>
+                        <option value="Gymnasium">Gymnasium</option>
+                        <option value="Library">Library</option>
+                        <option value="Canteen">Canteen</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                         <i class="fa-solid fa-chevron-down text-xs"></i>
                     </div>
                 </div>
-                <p class="text-xs text-gray-500 mt-1.5">Select the PUP Main Campus building or area where the incident occurred</p>
+                <span asp-validation-for="CampusLocation" class="text-red-500 text-xs mt-1 block"></span>
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
-                <textarea asp-for="Description" rows="4"
+                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                    Description <span class="text-red-500">*</span>
+                </label>
+                <textarea asp-for="Description"
+                          rows="4"
                           placeholder="Please provide a detailed description of the incident..."
                           class="block w-full p-3 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-200 focus:ring-[#800000] focus:border-[#800000]"></textarea>
+                <div class="flex justify-between items-center mt-1">
+                    <span asp-validation-for="Description" class="text-red-500 text-xs"></span>
+                    <span class="text-xs text-gray-400">Maximum 500 characters</span>
+                </div>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Photo (Optional)</label>
                 <div class="flex items-center justify-center w-full">
-                    <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-auto min-h-[160px] border-2 border-gray-200 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors relative overflow-hidden">
+
+                        <div id="upload-prompt" class="flex flex-col items-center justify-center pt-5 pb-6">
                             <i class="fa-solid fa-arrow-up-from-bracket text-2xl text-gray-400 mb-3"></i>
                             <p class="mb-1 text-sm font-bold text-[#800000]">Choose a file</p>
                             <p class="text-sm text-gray-500">or drag and drop</p>
                             <p class="text-xs text-gray-400 mt-1">PNG, JPG up to 2MB</p>
                         </div>
-                        <input id="dropzone-file" type="file" name="imageFile" class="hidden" />
+
+                        <div id="file-preview" class="hidden flex-col items-center justify-center pt-5 pb-6 w-full px-4">
+                            <div class="relative">
+                                <img id="preview-image" src="#" alt="Preview" class="h-32 object-contain mb-2 rounded shadow-sm" />
+                                <button type="button" id="remove-file-btn" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-700 shadow-md">
+                                    <i class="fa-solid fa-xmark text-xs"></i>
+                                </button>
+                            </div>
+                            <p id="file-name" class="text-sm text-gray-900 font-medium truncate max-w-full"></p>
+                            <p class="text-xs text-green-600 mt-1"><i class="fa-solid fa-check-circle"></i> Photo attached</p>
+                        </div>
+
+                        <input id="dropzone-file" type="file" name="imageFile" class="hidden" accept=".jpg,.jpeg,.png" />
                     </label>
                 </div>
+                <p class="text-xs text-gray-500 mt-2">Accepted formats: JPG, PNG. Maximum file size: 2MB</p>
             </div>
 
             <div class="flex gap-4 pt-4">
-                <a asp-controller="Home" asp-action="Index" class="w-full py-3 px-5 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 hover:text-gray-900 text-center transition-colors">
+                <a asp-controller="Home" asp-action="Index"
+                   class="w-full py-3 px-5 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 hover:text-gray-900 text-center transition-colors">
                     Cancel
                 </a>
 
-                <button type="submit" class="w-full py-3 px-5 text-sm font-semibold text-white bg-[#800000] rounded-lg hover:bg-red-900 transition-colors shadow-sm">
+                <button type="submit"
+                        class="w-full py-3 px-5 text-sm font-semibold text-white bg-[#800000] rounded-lg hover:bg-red-900 transition-colors shadow-sm">
                     Submit Report
                 </button>
             </div>
@@ -93,3 +187,92 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            const fileInput = $('#dropzone-file');
+            const uploadPrompt = $('#upload-prompt');
+            const filePreview = $('#file-preview');
+            const previewImage = $('#preview-image');
+            const fileName = $('#file-name');
+            const removeBtn = $('#remove-file-btn');
+
+            // Handle File Selection
+            fileInput.on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Please select a valid image file (JPG or PNG)');
+                        fileInput.val('');
+                        return;
+                    }
+
+                    // Validate file size (2MB = 2 * 1024 * 1024 bytes)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('File size must not exceed 2MB');
+                        fileInput.val('');
+                        return;
+                    }
+
+                    // Show file name
+                    fileName.text(file.name);
+
+                    // Create image preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.attr('src', e.target.result);
+
+                        // Switch views
+                        uploadPrompt.addClass('hidden');
+                        filePreview.removeClass('hidden').addClass('flex');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Handle Remove Button
+            removeBtn.on('click', function(e) {
+                e.preventDefault(); // Prevent opening the file dialog again
+                e.stopPropagation(); // Stop event bubbling
+
+                // Clear input
+                fileInput.val('');
+
+                // Switch views back
+                filePreview.addClass('hidden').removeClass('flex');
+                uploadPrompt.removeClass('hidden');
+            });
+
+            // Optional: Handle drag and drop
+            const dropzone = $('#dropzone-file').parent();
+
+            dropzone.on('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).addClass('border-[#800000] bg-red-50');
+            });
+
+            dropzone.on('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).removeClass('border-[#800000] bg-red-50');
+            });
+
+            dropzone.on('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).removeClass('border-[#800000] bg-red-50');
+
+                const files = e.originalEvent.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput[0].files = files;
+                    fileInput.trigger('change');
+                }
+            });
+        });
+    </script>
+}
