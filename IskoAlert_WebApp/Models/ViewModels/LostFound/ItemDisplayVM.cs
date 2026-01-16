@@ -22,8 +22,5 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
 
         public string? ImagePath { get; set; }
 
-        // UI-only flags
-        public bool CanEdit { get; set; }
-        public bool CanArchive { get; set; }
     }
 }

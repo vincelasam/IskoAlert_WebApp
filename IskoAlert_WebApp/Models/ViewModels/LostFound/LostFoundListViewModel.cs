@@ -20,8 +20,5 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
          
         public List<LostFoundItemDisplayViewModel> Items { get; set; }
             = new();
-
-        // PAGE CONTEXT 
-        public bool IsMyListingsPage { get; set; }
     }
 }
