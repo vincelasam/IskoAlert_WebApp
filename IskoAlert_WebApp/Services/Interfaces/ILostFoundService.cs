@@ -10,10 +10,10 @@ namespace IskoAlert_WebApp.Services.Interfaces
         Task CreateLostItemAsync(CreateItem model, int userId);
 
         // Retrieves all lost and found items
-        Task<List<LostFoundItem>> GetAllItemsAsync(string keyword);
+        Task<List<LostFoundItem>> GetAllItemsAsync(string? keyword, string? status = null);
 
         // Retrieves all items reported by a specific user
-        Task<List<LostFoundItem>> GetUserItemsAsync(int userId);
+        Task<List<LostFoundItem>> GetUserItemsAsync(int userId, bool includeArchived = false);
         Task<LostFoundItem> GetItemByIdAsync(int itemId);//by id
 
         // Edit the item
