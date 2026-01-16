@@ -22,6 +22,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     )
 );
 
+// l
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // Configure Authentication services
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
@@ -59,6 +68,8 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Seed Data: Test User created successfully!");
     }
 }
+
+app.UseSession();
 
 // Identifies who the user is
 app.UseAuthentication();
