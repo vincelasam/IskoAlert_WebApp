@@ -16,11 +16,11 @@ namespace IskoAlert_WebApp.Models.Domain
         public ItemCategory Category { get; private set; }
         public ItemStatus Status { get; private set; }
         public DateTime? ArchivedAt { get; set; }
-        public string? ImagePath { get; private set; }
+        public string ImagePath { get; private set; }
 
         protected LostFoundItem() { }
 
-        public LostFoundItem(string title, string description, string email, CampusLocation location, ItemCategory category)
+        public LostFoundItem(string title, string description,ItemStatus status, string email, CampusLocation location, ItemCategory category,string image)
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("Item name is required.");
@@ -28,14 +28,14 @@ namespace IskoAlert_WebApp.Models.Domain
                 throw new ArgumentException("Description is required.");
             if (string.IsNullOrWhiteSpace(email))
                 throw new ArgumentException("Email is required.");
-
+            if (string.IsNullOrWhiteSpace(image)) throw new ArgumentException("Image is required.");
             Title = title;
             Description = description;
             Email = email;
             LocationFound = location;
             Category = category;
-
-            Status = ItemStatus.Lost;
+            Status = status;
+            ImagePath = image;
             DatePosted = DateTime.UtcNow;
         }
 
