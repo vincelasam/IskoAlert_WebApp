@@ -4,6 +4,7 @@ using IskoAlert_WebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IskoAlert_WebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260116083908_AddCredibilityFieldsToIncidentReport")]
+    partial class AddCredibilityFieldsToIncidentReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,7 +85,7 @@ namespace IskoAlert_WebApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("IncidentReports", (string)null);
+                    b.ToTable("IncidentReports");
                 });
 
             modelBuilder.Entity("IskoAlert_WebApp.Models.Domain.User", b =>
@@ -130,7 +133,7 @@ namespace IskoAlert_WebApp.Migrations
                     b.HasIndex("Webmail")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("IskoAlert_WebApp.Models.Domain.IncidentReport", b =>

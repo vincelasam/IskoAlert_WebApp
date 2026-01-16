@@ -38,50 +38,31 @@ builder.Services.AddAuthentication("CookieAuth")
 
 var app = builder.Build();
 
-// Seed database with test data
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
 
-    // Ensure database is created
-    context.Database.EnsureCreated();
+    
+    context.Database.Migrate();
 
-    // Seed test user if no users exist
+
     if (!context.Users.Any())
     {
-        context.Users.Add(
-            new User(
-                idNumber: "2021-00001-MN-0",
-                webmail: "admin@iskolarngbayan.pup.edu.ph",
-                passwordHash: BCrypt.Net.BCrypt.HashPassword("TestPassword123"),
-                name: "PUP Admin",
-                role: UserRole.Admin
-            )
-        );
-
-        context.Users.Add(
-            new User(
-                idNumber: "2021-00002-MN-0",
-                webmail: "student@iskolarngbayan.pup.edu.ph",
-                passwordHash: BCrypt.Net.BCrypt.HashPassword("TestPassword123"),
-                name: "Test Student",
-                role: UserRole.Student
-            )
-        );
+      
+        context.Users.Add(new User(
+            idNumber: "2021-00001-MN-0",
+            webmail: "admin@iskolarngbayan.pup.edu.ph",
+            passwordHash: BCrypt.Net.BCrypt.HashPassword("TestPassword123"),
+            name: "PUP Admin",
+            role: UserRole.Admin
+        ));
 
         context.SaveChanges();
-        Console.WriteLine("? Seed Data: Test users created successfully!");
     }
 }
 
-// Identifies who the user is
-app.UseAuthentication();
-
-// Determines what the user can access
-app.UseAuthorization();
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -90,14 +71,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Use the standard 'UseStaticFiles' to ensure images/css load correctly
 app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+app.UseAuthentication(); // Checks "Who are you?" (Cookies)
+app.UseAuthorization();  // Checks "Allowed to be here?" (Roles)
 
-// Sets the startup page to Account/Login
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
