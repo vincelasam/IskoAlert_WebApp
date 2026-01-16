@@ -1,6 +1,8 @@
+@model IskoAlert_WebApp.Models.ViewModels.Admin.AdminDashboardViewModel
+@using IskoAlert_WebApp.Models.Domain.Enums
 @{
     ViewData["Title"] = "Admin Dashboard";
-    Layout = "_AdminLayout"; // Connects to the Admin-specific layout we just made
+    Layout = "_AdminLayout";
 }
 
 <div class="mb-8">
@@ -8,13 +10,14 @@
     <p class="text-gray-500">Manage incident reports and monitor system activity</p>
 </div>
 
+<!-- STATISTICS CARDS -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div class="flex justify-between items-start mb-4">
             <span class="text-gray-500 text-sm font-medium">Total Reports</span>
             <i class="fa-regular fa-file-lines text-gray-400"></i>
         </div>
-        <h3 class="text-3xl font-bold text-gray-900">6</h3>
+        <h3 class="text-3xl font-bold text-gray-900">@Model.TotalReports</h3>
         <p class="text-xs text-gray-400 mt-1">All time</p>
     </div>
 
@@ -23,7 +26,7 @@
             <span class="text-gray-500 text-sm font-medium">Pending</span>
             <i class="fa-solid fa-circle-exclamation text-orange-400"></i>
         </div>
-        <h3 class="text-3xl font-bold text-gray-900">1</h3>
+        <h3 class="text-3xl font-bold text-gray-900">@Model.PendingReports</h3>
         <p class="text-xs text-gray-400 mt-1">Needs review</p>
     </div>
 
@@ -32,7 +35,7 @@
             <span class="text-gray-500 text-sm font-medium">In Progress</span>
             <i class="fa-regular fa-clock text-yellow-400"></i>
         </div>
-        <h3 class="text-3xl font-bold text-gray-900">1</h3>
+        <h3 class="text-3xl font-bold text-gray-900">@Model.InProgressReports</h3>
         <p class="text-xs text-gray-400 mt-1">Being addressed</p>
     </div>
 
@@ -41,20 +44,60 @@
             <span class="text-gray-500 text-sm font-medium">Resolved</span>
             <i class="fa-regular fa-circle-check text-green-500"></i>
         </div>
-        <h3 class="text-3xl font-bold text-gray-900">2</h3>
+        <h3 class="text-3xl font-bold text-gray-900">@Model.ResolvedReports</h3>
         <p class="text-xs text-gray-400 mt-1">Completed</p>
     </div>
 </div>
 
+<!-- AUTOMATION METRICS -->
+@if (Model.AutoAcceptedReports > 0 || Model.AutoRejectedReports > 0 || Model.ManualReviewRequired > 0)
+{
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+                <span class="text-purple-700 text-sm font-medium">Auto-Accepted</span>
+                <i class="fa-solid fa-robot text-purple-400"></i>
+            </div>
+            <h3 class="text-3xl font-bold text-purple-900">@Model.AutoAcceptedReports</h3>
+            <p class="text-xs text-purple-600 mt-1">Automatically processed</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border border-red-200 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+                <span class="text-red-700 text-sm font-medium">Auto-Rejected</span>
+                <i class="fa-solid fa-robot text-red-400"></i>
+            </div>
+            <h3 class="text-3xl font-bold text-red-900">@Model.AutoRejectedReports</h3>
+            <p class="text-xs text-red-600 mt-1">Automatically processed</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl border border-orange-200 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+                <span class="text-orange-700 text-sm font-medium">Manual Review</span>
+                <i class="fa-solid fa-user-check text-orange-400"></i>
+            </div>
+            <h3 class="text-3xl font-bold text-orange-900">@Model.ManualReviewRequired</h3>
+            <p class="text-xs text-orange-600 mt-1">Requires your attention</p>
+        </div>
+    </div>
+}
+
+<!-- QUICK ACTIONS -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
         <div class="flex items-center gap-4">
             <div class="h-12 w-12 rounded-full bg-[#800000] flex items-center justify-center text-white">
                 <i class="fa-regular fa-file-lines text-xl"></i>
             </div>
-            <span class="text-gray-600 font-medium">Review and manage all incident reports</span>
+            <div>
+                <span class="text-gray-600 font-medium block">Review and manage all incident reports</span>
+                @if (Model.ManualReviewRequired > 0)
+                {
+                    <span class="text-xs text-orange-600 font-medium">@Model.ManualReviewRequired pending review</span>
+                }
+            </div>
         </div>
-        <a asp-controller="Admin" asp-action="ManageIncidents" class="bg-[#800000] hover:bg-red-900 text-white text-sm font-semibold py-2 px-6 rounded-lg transition-colors inline-block text-center">
+        <a asp-controller="Admin" asp-action="ManageIncidents" class="bg-[#800000] hover:bg-red-900 text-white text-sm font-semibold py-2 px-6 rounded-lg transition-colors inline-block text-center whitespace-nowrap">
             Manage
         </a>
     </div>
@@ -64,80 +107,62 @@
             <div class="h-12 w-12 rounded-full bg-[#2E7D32] flex items-center justify-center text-white">
                 <i class="fa-solid fa-box-open text-xl"></i>
             </div>
-            <span class="text-gray-600 font-medium">Monitor all lost and found listings</span>
+            <div>
+                <span class="text-gray-600 font-medium block">Monitor all lost and found listings</span>
+                <span class="text-xs text-gray-500">View and manage items</span>
+            </div>
         </div>
-        <a asp-controller="Admin" asp-action="ManageLostFound" class="bg-[#2E7D32] hover:bg-green-800 text-white text-sm font-semibold py-2 px-6 rounded-lg transition-colors inline-block text-center">
+        <a asp-controller="Admin" asp-action="ManageLostFound" class="bg-[#2E7D32] hover:bg-green-800 text-white text-sm font-semibold py-2 px-6 rounded-lg transition-colors inline-block text-center whitespace-nowrap">
             View
         </a>
     </div>
 </div>
 
+<!-- RECENT REPORTS SECTION -->
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
     <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-        <h3 class="font-bold text-gray-900">Recent Reports</h3>
-        <a href="#" class="text-sm text-gray-600 hover:text-[#800000] font-medium">View All</a>
+        <h3 class="font-bold text-gray-900">Recent Activity</h3>
+        <a asp-controller="Admin" asp-action="ManageIncidents" class="text-sm text-gray-600 hover:text-[#800000] font-medium">View All Reports</a>
     </div>
-    
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left">
-            <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
-                <tr>
-                    <th class="px-6 py-3 font-medium">Report ID</th>
-                    <th class="px-6 py-3 font-medium">Type</th>
-                    <th class="px-6 py-3 font-medium">Reporter</th>
-                    <th class="px-6 py-3 font-medium">Date</th>
-                    <th class="px-6 py-3 font-medium">Status</th>
-                    <th class="px-6 py-3 font-medium">Action</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 text-gray-700">
-                
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-001</td>
-                    <td class="px-6 py-4">Theft</td>
-                    <td class="px-6 py-4">Lian Paredes</td>
-                    <td class="px-6 py-4">12/20/2024</td>
-                    <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Resolved</span></td>
-                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
-                </tr>
 
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-002</td>
-                    <td class="px-6 py-4">Safety Hazard</td>
-                    <td class="px-6 py-4">John Rich Nicolas</td>
-                    <td class="px-6 py-4">12/18/2024</td>
-                    <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Resolved</span></td>
-                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
-                </tr>
+    <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <div class="text-2xl font-bold text-gray-900">@Model.TotalReports</div>
+                <div class="text-xs text-gray-500 mt-1">Total Reports</div>
+            </div>
+            <div class="p-4 bg-orange-50 rounded-lg">
+                <div class="text-2xl font-bold text-orange-900">@Model.PendingReports</div>
+                <div class="text-xs text-orange-600 mt-1">Awaiting Review</div>
+            </div>
+            <div class="p-4 bg-green-50 rounded-lg">
+                <div class="text-2xl font-bold text-green-900">@Model.ResolvedReports</div>
+                <div class="text-xs text-green-600 mt-1">Resolved</div>
+            </div>
+        </div>
 
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-003</td>
-                    <td class="px-6 py-4">Vandalism</td>
-                    <td class="px-6 py-4">Admin User</td>
-                    <td class="px-6 py-4">12/22/2024</td>
-                    <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">Accepted</span></td>
-                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-004</td>
-                    <td class="px-6 py-4">Property Damage</td>
-                    <td class="px-6 py-4">Vince Michael Lasam</td>
-                    <td class="px-6 py-4">12/26/2024</td>
-                    <td class="px-6 py-4"><span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold">Pending</span></td>
-                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 font-semibold text-gray-900">#IR-2025-005</td>
-                    <td class="px-6 py-4">Harassment</td>
-                    <td class="px-6 py-4">Admin User</td>
-                    <td class="px-6 py-4">12/23/2024</td>
-                    <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">In-Progress</span></td>
-                    <td class="px-6 py-4"><button class="border border-gray-300 text-gray-600 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">Review</button></td>
-                </tr>
-
-            </tbody>
-        </table>
+        @if (Model.ManualReviewRequired > 0)
+        {
+            <div class="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-exclamation-triangle text-orange-600"></i>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-orange-900">Action Required</p>
+                        <p class="text-xs text-orange-700">You have <strong>@Model.ManualReviewRequired</strong> report(s) requiring manual review.</p>
+                    </div>
+                    <a asp-controller="Admin" asp-action="ManageIncidents" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold py-2 px-4 rounded-lg transition-colors">
+                        Review Now
+                    </a>
+                </div>
+            </div>
+        }
+        else if (Model.TotalReports == 0)
+        {
+            <div class="mt-6 p-8 text-center">
+                <i class="fa-regular fa-inbox text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500 font-medium">No reports yet</p>
+                <p class="text-sm text-gray-400 mt-1">Reports will appear here once students start submitting incidents.</p>
+            </div>
+        }
     </div>
 </div>

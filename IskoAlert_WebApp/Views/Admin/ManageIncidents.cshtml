@@ -1,58 +1,43 @@
+@model List<IskoAlert_WebApp.Models.ViewModels.Admin.AdminIncidentReportViewModel>
+@using IskoAlert_WebApp.Models.Domain.Enums
 @{
     ViewData["Title"] = "Incident Management";
     Layout = "_AdminLayout";
 }
 
 <div class="max-w-7xl mx-auto">
-
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-
         <div class="p-6 border-b border-gray-100">
             <h2 class="text-lg font-bold text-gray-900 mb-4">Incident Management</h2>
+            <p class="text-sm text-gray-500 mb-4">Review pending reports that require manual admin attention</p>
 
-            <div class="flex flex-col lg:flex-row gap-4">
+            <form method="get" class="flex flex-col lg:flex-row gap-4">
                 <div class="relative flex-grow">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                     </div>
-                    <input type="text"
+                    <input type="text" name="keyword"
                            class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block w-full pl-10 p-2.5"
-                           placeholder="Search by report ID, reporter, or location...">
+                           placeholder="Search by report ID, reporter, or location..."
+                           value="@ViewBag.Search">
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-4">
-
-                    <div class="relative w-full sm:w-48">
-                        <select class="w-full bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-2.5 appearance-none cursor-pointer hover:bg-gray-50 transition-colors">
-                            <option selected>All Status</option>
-                            <option>Pending</option>
-                            <option>Accepted</option>
-                            <option>In-Progress</option>
-                            <option>Resolved</option>
-                            <option>Rejected</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                            <i class="fa-solid fa-chevron-down text-xs"></i>
-                        </div>
+                <div class="relative w-full sm:w-48">
+                    <select name="credibilityFilter" class="w-full bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-2.5 appearance-none cursor-pointer hover:bg-gray-50 transition-colors">
+                        <option value="">All Credibility Levels</option>
+                        <option value="High" selected="@(ViewBag.CredibilityFilter == "High")">High (75+)</option>
+                        <option value="Medium" selected="@(ViewBag.CredibilityFilter == "Medium")">Medium (30-74)</option>
+                        <option value="Low" selected="@(ViewBag.CredibilityFilter == "Low")">Low (&lt;30)</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
                     </div>
-
-                    <div class="relative w-full sm:w-48">
-                        <select class="w-full bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-2.5 appearance-none cursor-pointer hover:bg-gray-50 transition-colors">
-                            <option selected>All Types</option>
-                            <option>Theft</option>
-                            <option>Vandalism</option>
-                            <option>Harassment</option>
-                            <option>Property Damage</option>
-                            <option>Safety Hazard</option>
-                            <option>Other</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                            <i class="fa-solid fa-chevron-down text-xs"></i>
-                        </div>
-                    </div>
-
                 </div>
-            </div>
+
+                <button type="submit" class="bg-[#800000] hover:bg-red-900 text-white text-sm font-semibold py-2 px-6 rounded-lg transition-colors">
+                    Filter
+                </button>
+            </form>
         </div>
 
         <div class="overflow-x-auto">
@@ -62,69 +47,100 @@
                         <th scope="col" class="px-6 py-4 font-bold">Report ID</th>
                         <th scope="col" class="px-6 py-4 font-bold">Type</th>
                         <th scope="col" class="px-6 py-4 font-bold">Reporter</th>
+                        <th scope="col" class="px-6 py-4 font-bold">Location</th>
+                        <th scope="col" class="px-6 py-4 font-bold">Credibility</th>
                         <th scope="col" class="px-6 py-4 font-bold">Date Submitted</th>
                         <th scope="col" class="px-6 py-4 font-bold">Status</th>
                         <th scope="col" class="px-6 py-4 font-bold">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-
-                    <tr class="bg-white hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">#IR-2025-015</td>
-                        <td class="px-6 py-4">Theft</td>
-                        <td class="px-6 py-4">Lian Paredes</td>
-                        <td class="px-6 py-4">1/6/2026</td>
-                        <td class="px-6 py-4">
-                            <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded border border-green-200">Resolved</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <a asp-controller="Admin" asp-action="ReviewIncident" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-3 py-1.5 transition-colors inline-block">
-                                Review
-                            </a>
-                        </td>
-                    </tr>
-
-                    <tr class="bg-white hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">#IR-2025-014</td>
-                        <td class="px-6 py-4">Vandalism</td>
-                        <td class="px-6 py-4">Vince Michael Lasam</td>
-                        <td class="px-6 py-4">1/5/2026</td>
-                        <td class="px-6 py-4">
-                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2.5 py-0.5 rounded border border-yellow-200">In-Progress</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <button class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-3 py-1.5 transition-colors">
-                                Review
-                            </button>
-                        </td>
-                    </tr>
-
-                    <tr class="bg-white hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">#IR-2025-012</td>
-                        <td class="px-6 py-4">Safety Hazard</td>
-                        <td class="px-6 py-4">John Rich Nicolas</td>
-                        <td class="px-6 py-4">1/3/2026</td>
-                        <td class="px-6 py-4">
-                            <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded border border-green-200">Resolved</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <button class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-3 py-1.5 transition-colors">
-                                Review
-                            </button>
-                        </td>
-                    </tr>
-
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var report in Model)
+                        {
+                            <tr class="bg-white hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-gray-900">#IR-@report.ReportId</td>
+                                <td class="px-6 py-4">
+                                    <span class="text-gray-700">@report.IncidentType</span>
+                                </td>
+                                <td class="px-6 py-4">@report.ReporterName</td>
+                                <td class="px-6 py-4 text-gray-600">@report.CampusLocation</td>
+                                <td class="px-6 py-4">
+                                    @{
+                                        var credibilityClass = report.CredibilityScore >= 75
+                                        ? "bg-green-100 text-green-800 border-green-200"
+                                        : report.CredibilityScore >= 30
+                                        ? "bg-yellow-100 text-yellow-800 border-yellow-200"
+                                        : "bg-red-100 text-red-800 border-red-200";
+                                    }
+                                    <span class="px-2.5 py-0.5 rounded border text-xs font-bold @credibilityClass">
+                                        @report.CredibilityScore
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">@report.CreatedAt.ToString("MM/dd/yyyy")</td>
+                                <td class="px-6 py-4">
+                                    @{
+                                        var statusClass = report.Status switch
+                                        {
+                                            ReportStatus.Pending => "bg-orange-100 text-orange-800 border-orange-200",
+                                            ReportStatus.Accepted => "bg-blue-100 text-blue-800 border-blue-200",
+                                            ReportStatus.InProgress => "bg-yellow-100 text-yellow-800 border-yellow-200",
+                                            ReportStatus.Resolved => "bg-green-100 text-green-800 border-green-200",
+                                            ReportStatus.Rejected => "bg-red-100 text-red-800 border-red-200",
+                                            _ => "bg-gray-100 text-gray-800 border-gray-200"
+                                        };
+                                    }
+                                    <span class="px-2.5 py-0.5 rounded border text-xs font-bold @statusClass">
+                                        @report.Status
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <a asp-controller="Admin" asp-action="ReviewIncident" asp-route-id="@report.ReportId"
+                                       class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-3 py-1.5 transition-colors inline-block">
+                                        Review
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="px-6 py-8 text-center text-gray-500">
+                                <div class="flex flex-col items-center gap-2">
+                                    <i class="fa-regular fa-inbox text-4xl text-gray-300"></i>
+                                    <p class="font-medium">No pending reports found</p>
+                                    <p class="text-sm">All reports have been processed or there are no reports requiring manual review.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
 
-        <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
-            <span class="text-xs text-gray-500">Showing <span class="font-semibold text-gray-900">1</span> to <span class="font-semibold text-gray-900">10</span> of <span class="font-semibold text-gray-900">15</span> Entries</span>
-            <div class="inline-flex gap-2">
-                <button class="px-3 py-1 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50">Previous</button>
-                <button class="px-3 py-1 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700">Next</button>
+        @if (Model != null && Model.Any())
+        {
+            <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
+                <span class="text-xs text-gray-500">
+                    Showing <span class="font-semibold text-gray-900">@Model.Count</span> report(s) requiring manual review
+                </span>
+                <div class="inline-flex gap-2">
+                    <form asp-controller="Admin" asp-action="BulkAcceptPending" method="post" class="inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit"
+                                class="px-3 py-1 text-xs font-medium text-white bg-[#800000] border border-[#800000] rounded-lg hover:bg-red-900 transition-colors"
+                                onclick="return confirm('Are you sure you want to accept all pending reports?');">
+                            Accept All Pending
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
-
+        }
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/search.js"></script>
+}
