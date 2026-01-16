@@ -70,6 +70,7 @@ namespace IskolarAlert.Controllers
                     // Create a list of claims representing the authenticated user's data
                     var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Webmail),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
