@@ -24,15 +24,20 @@
             public string? ImagePath { get; private set; }
 
 
-            public LostFoundItem(string title, string description, string email, CampusLocation location, ItemCategory category)
+        private LostFoundItem() { } // EF Core needs this!
+
+        public LostFoundItem(int userId, string title, string description, string email, CampusLocation location, ItemCategory category)
             {
+                if (userId <= 0)
+                    throw new ArgumentException("A valid UserId is required.");
                 if (string.IsNullOrWhiteSpace(title))
                     throw new ArgumentException("Item name is required.");
                 if (string.IsNullOrWhiteSpace(description))
                     throw new ArgumentException("Description is required.");
                 if (string.IsNullOrWhiteSpace(email))
                     throw new ArgumentException("Email is required.");
-
+                
+                UserId = userId;    
                 Title = title;
                 Description = description;
                 Email = email;
