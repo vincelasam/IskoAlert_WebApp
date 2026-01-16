@@ -40,6 +40,9 @@ namespace IskoAlert_WebApp.Data
             {
                 entity.HasKey(ir => ir.ReportId);
 
+                // ADDED: IncidentType enum stored as string
+                entity.Property(ir => ir.IncidentType).HasConversion<string>().IsRequired();
+
                 // Added Campus Location as requested
                 entity.Property(ir => ir.CampusLocation).IsRequired().HasMaxLength(150);
 

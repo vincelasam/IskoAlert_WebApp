@@ -1,7 +1,5 @@
-
 using IskoAlert_WebApp.Models.Domain;
 using IskoAlert_WebApp.Models.Domain.Enums;
-using IskoAlert_WebApp.Models.ViewModels.Account;
 using IskoAlert_WebApp.Models.ViewModels.Account;
 using IskoAlert_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
@@ -41,7 +39,7 @@ namespace IskolarAlert.Controllers
                 TempData["SuccessMessage"] = "Registration successful!";
                 return RedirectToAction("Login");
             }
-            catch (Exception ex)  // Handle business logic errors
+            catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
                 return View(model);
@@ -67,13 +65,14 @@ namespace IskolarAlert.Controllers
 
                 if (user != null)
                 {
-                    // Create a list of claims representing the authenticated user's data
+                    // FIXED: Create a list of claims including UserId as NameIdentifier
                     var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Email, user.Webmail),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()), // ADDED THIS
+                        new Claim(ClaimTypes.Name, user.Name),
+                        new Claim(ClaimTypes.Email, user.Webmail),
+                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                    };
 
                     // Initialize the identity using the designated cookie authentication scheme
                     var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");

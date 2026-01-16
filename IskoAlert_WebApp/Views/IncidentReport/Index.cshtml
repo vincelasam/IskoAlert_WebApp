@@ -1,5 +1,6 @@
+@model List<IskoAlert_WebApp.Models.ViewModels.IncidentReport.IncidentReportListViewModel>
 @{
-    ViewData["Title"] = "My Reports"; //dating MyReports
+    ViewData["Title"] = "My Reports";
 }
 
 <div class="max-w-5xl mx-auto">
@@ -19,23 +20,30 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                     </div>
-                    <input type="text"
+                    <input type="text" id="searchInput"
                            class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block w-full pl-10 p-2.5"
                            placeholder="Search by report ID, type, or location...">
                 </div>
 
                 <div class="sm:w-48">
-                    <select class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block w-full p-2.5">
-                        <option selected>All Status</option>
-                        <option>Pending</option>
-                        <option>Accepted</option>
-                        <option>In-Progress</option>
-                        <option>Resolved</option>
-                        <option>Rejected</option>
+                    <select id="statusFilter" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block w-full p-2.5">
+                        <option value="">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="InProgress">In-Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Rejected">Rejected</option>
                     </select>
                 </div>
             </div>
         </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="p-4 bg-green-50 border-l-4 border-green-500">
+                <p class="text-sm text-green-700 font-medium">@TempData["SuccessMessage"]</p>
+            </div>
+        }
 
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left text-gray-500">
@@ -43,37 +51,153 @@
                     <tr>
                         <th scope="col" class="px-6 py-4 font-bold">Report ID</th>
                         <th scope="col" class="px-6 py-4 font-bold">Type</th>
+                        <th scope="col" class="px-6 py-4 font-bold">Title</th>
                         <th scope="col" class="px-6 py-4 font-bold">Location</th>
                         <th scope="col" class="px-6 py-4 font-bold">Date Submitted</th>
                         <th scope="col" class="px-6 py-4 font-bold">Status</th>
                         <th scope="col" class="px-6 py-4 font-bold">Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="bg-white hover:bg-gray-50 border-b border-gray-50 last:border-0 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900">#IR-2025-001</td>
-                        <td class="px-6 py-4">Theft</td>
-                        <td class="px-6 py-4">Main Library</td>
-                        <td class="px-6 py-4">12/20/2024</td>
-                        <td class="px-6 py-4">
-                            <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded border border-green-200">
-                                Resolved
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <a asp-controller="IncidentReport" asp-action="ReportDetails" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-3 py-1.5 transition-colors">
-                                View Details
-                            </a>
-                        </td>
-                    </tr>
-
+                <tbody id="reportTableBody">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                                <i class="fa-regular fa-folder-open text-4xl mb-2 text-gray-300"></i>
+                                <p class="font-medium">No incident reports found</p>
+                                <a asp-controller="IncidentReport" asp-action="ReportIncident" class="text-[#800000] hover:underline text-sm mt-2 inline-block">Submit your first report</a>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var report in Model)
+                        {
+                            <tr class="bg-white hover:bg-gray-50 border-b border-gray-50 last:border-0 transition-colors report-row"
+                                data-title="@report.Title.ToLower()"
+                                data-type="@report.IncidentType.ToString().ToLower()"
+                                data-location="@report.CampusLocation.ToLower()"
+                                data-status="@report.Status.ToString()">
+                                <td class="px-6 py-4 font-medium text-gray-900">#IR-@report.ReportId.ToString("D4")</td>
+                                <td class="px-6 py-4">
+                                    @switch (report.IncidentType)
+                                    {
+                                        case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Accident:
+                                            <span class="text-xs">Accident</span>
+                                            break;
+                                        case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Hazard:
+                                            <span class="text-xs">Hazard</span>
+                                            break;
+                                        case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.MedicalEmergency:
+                                            <span class="text-xs">Medical Emergency</span>
+                                            break;
+                                        case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Theft:
+                                            <span class="text-xs">Theft</span>
+                                            break;
+                                        case IskoAlert_WebApp.Models.Domain.Enums.IncidentType.Others:
+                                            <span class="text-xs">Others</span>
+                                            break;
+                                    }
+                                </td>
+                                <td class="px-6 py-4">@report.Title</td>
+                                <td class="px-6 py-4">@report.CampusLocation</td>
+                                <td class="px-6 py-4">@report.CreatedAt.ToString("MM/dd/yyyy")</td>
+                                <td class="px-6 py-4">
+                                    @switch (report.Status)
+                                    {
+                                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Pending:
+                                            <span class="bg-orange-100 text-orange-800 text-xs font-bold px-2.5 py-0.5 rounded border border-orange-200">
+                                                Pending
+                                            </span>
+                                            break;
+                                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Accepted:
+                                            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded border border-blue-200">
+                                                Accepted
+                                            </span>
+                                            break;
+                                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress:
+                                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2.5 py-0.5 rounded border border-yellow-200">
+                                                In-Progress
+                                            </span>
+                                            break;
+                                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Resolved:
+                                            <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded border border-green-200">
+                                                Resolved
+                                            </span>
+                                            break;
+                                        case IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Rejected:
+                                            <span class="bg-red-100 text-red-800 text-xs font-bold px-2.5 py-0.5 rounded border border-red-200">
+                                                Rejected
+                                            </span>
+                                            break;
+                                    }
+                                </td>
+                                <td class="px-6 py-4">
+                                    <a asp-controller="IncidentReport" asp-action="ReportDetails" asp-route-id="@report.ReportId"
+                                       class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-3 py-1.5 transition-colors">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
                 </tbody>
             </table>
         </div>
 
-        <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
-            <span class="text-xs text-gray-500">Showing <span class="font-semibold text-gray-900">1</span> of <span class="font-semibold text-gray-900">1</span> Entries</span>
-        </div>
+        @if (Model != null && Model.Any())
+        {
+            <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
+                <span class="text-xs text-gray-500">Showing <span class="font-semibold text-gray-900" id="showingCount">@Model.Count</span> of <span class="font-semibold text-gray-900">@Model.Count</span> Entries</span>
+            </div>
+        }
 
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Search and Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const reportRows = document.querySelectorAll('.report-row');
+            const showingCount = document.getElementById('showingCount');
+
+            function filterReports() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const statusValue = statusFilter.value;
+                let visibleCount = 0;
+
+                reportRows.forEach(row => {
+                    const title = row.dataset.title;
+                    const type = row.dataset.type;
+                    const location = row.dataset.location;
+                    const status = row.dataset.status;
+
+                    const matchesSearch = title.includes(searchTerm) || type.includes(searchTerm) || location.includes(searchTerm);
+                    const matchesStatus = !statusValue || status === statusValue;
+
+                    if (matchesSearch && matchesStatus) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                if (showingCount) {
+                    showingCount.textContent = visibleCount;
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterReports);
+            }
+
+            if (statusFilter) {
+                statusFilter.addEventListener('change', filterReports);
+            }
+        });
+    </script>
+}

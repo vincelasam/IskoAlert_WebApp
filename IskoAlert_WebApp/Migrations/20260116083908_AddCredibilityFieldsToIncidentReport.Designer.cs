@@ -4,6 +4,7 @@ using IskoAlert_WebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IskoAlert_WebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260116083908_AddCredibilityFieldsToIncidentReport")]
+    partial class AddCredibilityFieldsToIncidentReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,61 +88,6 @@ namespace IskoAlert_WebApp.Migrations
                     b.ToTable("IncidentReports");
                 });
 
-            modelBuilder.Entity("IskoAlert_WebApp.Models.Domain.LostFoundItem", b =>
-                {
-                    b.Property<int>("ItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemId"));
-
-                    b.Property<DateTime?>("ArchivedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DatePosted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ImagePath")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("LocationFound")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ItemId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("LostFoundItems");
-                });
-
             modelBuilder.Entity("IskoAlert_WebApp.Models.Domain.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -189,17 +137,6 @@ namespace IskoAlert_WebApp.Migrations
                 });
 
             modelBuilder.Entity("IskoAlert_WebApp.Models.Domain.IncidentReport", b =>
-                {
-                    b.HasOne("IskoAlert_WebApp.Models.Domain.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("IskoAlert_WebApp.Models.Domain.LostFoundItem", b =>
                 {
                     b.HasOne("IskoAlert_WebApp.Models.Domain.User", "User")
                         .WithMany()
