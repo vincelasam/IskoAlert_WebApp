@@ -18,8 +18,35 @@ namespace IskoAlert_WebApp.Services.Implementations
 
         public async Task CreateLostItemAsync(LostFoundItemViewModel model)
         {
+            // TODO: implement creation logic
+            throw new NotImplementedException();
+        }
 
+        public async Task<List<LostFoundItem>> GetAllItemsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<LostFoundItem>> GetUserItemsAsync(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<LostFoundItem?> GetItemByIdAsync(int itemId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task UpdateItemStatusAsync(int itemId, ItemStatus newStatus)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task DeleteItemAsync(int itemId)
+        {
+            throw new NotImplementedException();
         }
     }
+
 
 }
