@@ -40,15 +40,21 @@ namespace IskoAlert_WebApp.Data
             {
                 entity.HasKey(ir => ir.ReportId);
 
-                // Added Campus Location as requested
+                // Basic incident fields
                 entity.Property(ir => ir.CampusLocation).IsRequired().HasMaxLength(150);
-
                 entity.Property(ir => ir.Title).IsRequired().HasMaxLength(150);
                 entity.Property(ir => ir.Description).IsRequired().HasMaxLength(500); // SRS Requirement
                 entity.Property(ir => ir.ImagePath).HasMaxLength(255); // For JPG/PNG evidence
 
                 // Enums: Status (Pending, Accepted, In-Progress, Resolved, Rejected)
                 entity.Property(ir => ir.Status).HasConversion<string>().IsRequired();
+
+                // ===== CREDIBILITY ANALYSIS FIELDS =====
+                entity.Property(ir => ir.CredibilityScore).IsRequired().HasDefaultValue(0);
+                entity.Property(ir => ir.IsAutoProcessed).IsRequired().HasDefaultValue(false);
+                entity.Property(ir => ir.AnalysisReason).HasColumnType("nvarchar(max)");
+                entity.Property(ir => ir.RedFlags).HasColumnType("nvarchar(max)");
+                entity.Property(ir => ir.PositiveSignals).HasColumnType("nvarchar(max)");
 
                 entity.HasOne(ir => ir.User)
                       .WithMany()

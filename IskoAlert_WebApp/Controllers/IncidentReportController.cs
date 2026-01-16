@@ -1,10 +1,12 @@
 using IskoAlert_WebApp.Data;
 using IskoAlert_WebApp.Models.Domain;
 using IskoAlert_WebApp.Models.ViewModels.IncidentReport;
+using IskoAlert_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace IskoAlert_WebApp.Controllers
 {
@@ -12,10 +14,14 @@ namespace IskoAlert_WebApp.Controllers
     public class IncidentReportController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICredibilityAnalyzerService _credibilityAnalyzer;
 
-        public IncidentReportController(ApplicationDbContext context)
+        public IncidentReportController(
+            ApplicationDbContext context,
+            ICredibilityAnalyzerService credibilityAnalyzer)
         {
             _context = context;
+            _credibilityAnalyzer = credibilityAnalyzer;
         }
 
         // GET: /IncidentReport/Index
@@ -23,13 +29,14 @@ namespace IskoAlert_WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null) return Unauthorized();
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (userEmail == null) return Unauthorized();
 
-            int userId = int.Parse(userIdClaim);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Webmail == userEmail);
+            if (user == null) return Unauthorized();
 
             var reports = await _context.IncidentReports
-                .Where(ir => ir.UserId == userId)
+                .Where(ir => ir.UserId == user.UserId)
                 .OrderByDescending(ir => ir.CreatedAt)
                 .Select(ir => new IncidentReportListViewModel
                 {
@@ -37,7 +44,9 @@ namespace IskoAlert_WebApp.Controllers
                     Title = ir.Title,
                     CampusLocation = ir.CampusLocation,
                     Status = ir.Status,
-                    CreatedAt = ir.CreatedAt
+                    CreatedAt = ir.CreatedAt,
+                    CredibilityScore = ir.CredibilityScore,
+                    IsAutoProcessed = ir.IsAutoProcessed
                 })
                 .ToListAsync();
 
@@ -52,7 +61,7 @@ namespace IskoAlert_WebApp.Controllers
         }
 
         // POST: /IncidentReport/ReportIncident
-        // Processes the submission of a new incident report
+        // Processes the submission of a new incident report with automated credibility analysis
         [HttpPost]
         [ValidateAntiForgeryToken] // Security: Protect against CSRF attacks
         public async Task<IActionResult> ReportIncident(IncidentReportViewModel model, IFormFile? imageFile)
@@ -61,25 +70,58 @@ namespace IskoAlert_WebApp.Controllers
 
             try
             {
-                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
-                int userId = int.Parse(userIdClaim);
+                var userEmail = User.FindFirstValue(ClaimTypes.Email);
+                if (string.IsNullOrEmpty(userEmail)) return Unauthorized();
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Webmail == userEmail);
+                if (user == null) return Unauthorized();
 
                 string? savedPath = await HandleImageUpload(imageFile);
 
                 // Domain Model creation using Constructor due to private setters
                 var incident = new IncidentReport(
-                    userId,
+                    user.UserId,
                     model.CampusLocation,
                     model.Title,
                     model.Description,
                     savedPath
                 );
 
+                // ===== AUTOMATED CREDIBILITY ANALYSIS =====
+                var analysisResult = _credibilityAnalyzer.AnalyzeReport(incident);
+
+                // Set the credibility analysis on the incident
+                incident.SetCredibilityAnalysis(
+                    credibilityScore: analysisResult.CredibilityScore,
+                    isAutoProcessed: !analysisResult.RequiresManualReview,
+                    analysisReason: analysisResult.AnalysisReason,
+                    redFlags: JsonSerializer.Serialize(analysisResult.RedFlags),
+                    positiveSignals: JsonSerializer.Serialize(analysisResult.PositiveSignals)
+                );
+
+                // Update status based on analysis
+                incident.UpdateStatus(analysisResult.RecommendedAction);
+
                 _context.IncidentReports.Add(incident);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Incident report submitted successfully.";
+                // Provide feedback to user based on analysis result
+                if (analysisResult.RecommendedAction == Models.Domain.Enums.ReportStatus.Accepted)
+                {
+                    TempData["SuccessMessage"] = "? Your incident report has been automatically accepted and forwarded to campus security. You will receive updates via email.";
+                    TempData["SuccessDetails"] = $"Credibility Score: {analysisResult.CredibilityScore}/100";
+                }
+                else if (analysisResult.RecommendedAction == Models.Domain.Enums.ReportStatus.Rejected)
+                {
+                    TempData["WarningMessage"] = "?? Your report could not be automatically processed. It appears to lack sufficient detail or credibility. Please ensure all information is accurate and detailed.";
+                    TempData["WarningDetails"] = "If you believe this is an error, please contact campus security directly.";
+                }
+                else
+                {
+                    TempData["InfoMessage"] = "?? Your report is pending review. An administrator will evaluate it shortly.";
+                    TempData["InfoDetails"] = $"Credibility Score: {analysisResult.CredibilityScore}/100 - Manual review required.";
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException ex)
@@ -94,31 +136,45 @@ namespace IskoAlert_WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> ReportDetails(int id)
         {
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(userEmail)) return Unauthorized();
 
-            int userId = int.Parse(userIdClaim);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Webmail == userEmail);
+            if (user == null) return Unauthorized();
 
             var incident = await _context.IncidentReports
                 .Include(ir => ir.User)
-                .Where(ir => ir.ReportId == id && ir.UserId == userId)
-                .Select(ir => new IncidentReportDetailsViewModel
-                {
-                    ReportId = ir.ReportId,
-                    Title = ir.Title,
-                    Description = ir.Description,
-                    CampusLocation = ir.CampusLocation,
-                    ImagePath = ir.ImagePath,
-                    Status = ir.Status,
-                    CreatedAt = ir.CreatedAt,
-                    ReporterName = ir.User.Name,
-                    ReporterWebmail = ir.User.Webmail
-                })
+                .Where(ir => ir.ReportId == id && ir.UserId == user.UserId)
                 .FirstOrDefaultAsync();
 
             if (incident == null) return NotFound();
 
-            return View(incident);
+            // Ensure User is loaded
+            if (incident.User == null) return NotFound("User information not available");
+
+            var viewModel = new IncidentReportDetailsViewModel
+            {
+                ReportId = incident.ReportId,
+                Title = incident.Title,
+                Description = incident.Description,
+                CampusLocation = incident.CampusLocation,
+                ImagePath = incident.ImagePath,
+                Status = incident.Status,
+                CreatedAt = incident.CreatedAt,
+                ReporterName = incident.User.Name,
+                ReporterWebmail = incident.User.Webmail,
+                CredibilityScore = incident.CredibilityScore,
+                IsAutoProcessed = incident.IsAutoProcessed,
+                AnalysisReason = incident.AnalysisReason,
+                RedFlags = string.IsNullOrEmpty(incident.RedFlags)
+                    ? new List<string>()
+                    : JsonSerializer.Deserialize<List<string>>(incident.RedFlags) ?? new List<string>(),
+                PositiveSignals = string.IsNullOrEmpty(incident.PositiveSignals)
+                    ? new List<string>()
+                    : JsonSerializer.Deserialize<List<string>>(incident.PositiveSignals) ?? new List<string>()
+            };
+
+            return View(viewModel);
         }
 
         // Helper Method: Handles Physical Storage and Validation

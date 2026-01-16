@@ -2,7 +2,6 @@
 using IskoAlert_WebApp.Models.Domain;
 using IskoAlert_WebApp.Models.Domain.Enums;
 using IskoAlert_WebApp.Models.ViewModels.Account;
-using IskoAlert_WebApp.Models.ViewModels.Account;
 using IskoAlert_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
