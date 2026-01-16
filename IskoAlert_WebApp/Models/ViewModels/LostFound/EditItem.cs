@@ -20,6 +20,9 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
         [Required]
         public CampusLocation SelectedCampusLocation { get; set; }
         public IEnumerable<SelectListItem> CampusLocations { get; set; } = new List<SelectListItem>();
+        [Required]
+        public ItemCategory SelectedCategory { get; set; }
+        public IEnumerable<SelectListItem> Category { get; set; } = new List<SelectListItem>();
 
         [Required]
         [EmailAddress]
