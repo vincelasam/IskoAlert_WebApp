@@ -1,17 +1,19 @@
-    
+
 using IskoAlert_WebApp.Models.Domain;
 using IskoAlert_WebApp.Models.Domain.Enums;
 using IskoAlert_WebApp.Models.ViewModels.Account;
-using Microsoft.AspNetCore.Mvc;
 using IskoAlert_WebApp.Models.ViewModels.Account;
 using IskoAlert_WebApp.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IskolarAlert.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserService _userService; 
-        
+        private readonly IUserService _userService;
+
         public AccountController(IUserService userService)
         {
             _userService = userService;
@@ -29,13 +31,13 @@ namespace IskolarAlert.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model); 
+                return View(model);
             }
-            
+
             try
             {
                 await _userService.RegisterAsync(model);
-                
+
                 TempData["SuccessMessage"] = "Registration successful!";
                 return RedirectToAction("Login");
             }
@@ -63,21 +65,38 @@ namespace IskolarAlert.Controllers
             {
                 var user = await _userService.ValidateCredentialsAsync(model.Email, model.Password, Enum.Parse<UserRole>(model.Role));
 
-                if (user == null)
+                if (user != null)
                 {
-                    ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
-                    return View();
+                    // Create a list of claims representing the authenticated user's data
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Webmail),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            };
+
+                    // Initialize the identity using the designated cookie authentication scheme
+                    var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+                    var authProperties = new AuthenticationProperties { IsPersistent = true };
+
+                    // Issue the authentication cookie to the user's browser
+                    await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    if (user.Role == UserRole.Student)
+                        return RedirectToAction("Index", "Home");
+                    else
+                        return RedirectToAction("Index", "Admin");
                 }
 
-                if (user.Role == UserRole.Student)
-                    return RedirectToAction("Index", "Home");
-                else
-                    return RedirectToAction("Index", "Admin");
+                // Return to view with an error message if credentials do not match
+                ViewData["ErrorMessage"] = "Invalid credentials. Please try again.";
+                return View(model);
             }
             catch (Exception ex)
             {
+                // Catch and display any business logic exceptions (e.g., account status issues)
                 ViewData["ErrorMessage"] = ex.Message;
-                return View();
+                return View(model);
             }
         }
 

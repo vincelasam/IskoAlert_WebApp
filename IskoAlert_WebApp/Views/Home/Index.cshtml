@@ -1,9 +1,10 @@
+@model IskoAlert_WebApp.Models.ViewModels.Dashboard.DashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
 }
 
 <div class="mb-8">
-    <h2 class="text-2xl font-bold text-gray-900">Welcome back, Lian Paredes!</h2>
+    <h2 class="text-2xl font-bold text-gray-900">Welcome back, @Model.FullName!</h2>
     <p class="text-gray-500">Track your reports and browse lost & found items</p>
 </div>
 
@@ -14,7 +15,7 @@
             <span class="text-gray-500 text-sm font-medium">Total Reports</span>
             <i class="fa-regular fa-file-lines text-gray-400"></i>
         </div>
-        <h3 class="text-3xl font-bold text-gray-900">1</h3>
+        <h3 class="text-3xl font-bold text-gray-900">@Model.TotalReports</h3>
         <p class="text-xs text-gray-400 mt-1">All incident reports</p>
     </div>
 
@@ -23,7 +24,7 @@
             <span class="text-gray-500 text-sm font-medium">Pending</span>
             <i class="fa-solid fa-circle-exclamation text-orange-400"></i>
         </div>
-        <h3 class="text-3xl font-bold text-gray-900">0</h3>
+        <h3 class="text-3xl font-bold text-gray-900">@Model.PendingReports</h3>
         <p class="text-xs text-gray-400 mt-1">Awaiting review</p>
     </div>
 
@@ -32,7 +33,7 @@
             <span class="text-gray-500 text-sm font-medium">In Progress</span>
             <i class="fa-regular fa-clipboard text-yellow-400"></i>
         </div>
-        <h3 class="text-3xl font-bold text-gray-900">0</h3>
+        <h3 class="text-3xl font-bold text-gray-900">@Model.InProgressReports</h3>
         <p class="text-xs text-gray-400 mt-1">Being addressed</p>
     </div>
 
