@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using System.Security.Claims;
+using IskoAlert_WebApp.Services;
 
 namespace IskoAlert_WebApp.Controllers
 {
@@ -38,26 +39,6 @@ namespace IskoAlert_WebApp.Controllers
             return claim.Value;
         }
 
-        private void PopulateDropdowns(dynamic model)
-        {
-            // Category dropdown from ItemCategory enum
-            model.Category = Enum.GetValues(typeof(ItemCategory))
-                                 .Cast<ItemCategory>()
-                                 .Select(c => new SelectListItem
-                                 {
-                                     Text = c.ToString(),
-                                     Value = ((int)c).ToString()
-                                 }).ToList();
-
-            // Campus location dropdown from CampusLocation enum
-            model.CampusLocations = Enum.GetValues(typeof(CampusLocation))
-                                        .Cast<CampusLocation>()
-                                        .Select(l => new SelectListItem
-                                        {
-                                            Text = l.ToString(),
-                                            Value = ((int)l).ToString()
-                                        }).ToList();
-        }
 
         [HttpGet] //home, kinukuha lahat ng list of items
         public async Task<IActionResult> Index(string? keyword, string? status)
@@ -161,7 +142,7 @@ namespace IskoAlert_WebApp.Controllers
                 UserId = 0,
                 LostOrFound = ItemStatus.Found // Set default to Found
             };
-            PopulateDropdowns(model);
+            DropdownHelper.PopulateLostFoundDropdowns(model);
             return View(model);
         }
 
@@ -170,7 +151,7 @@ namespace IskoAlert_WebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PopulateDropdowns(model);
+                DropdownHelper.PopulateLostFoundDropdowns(model);
                 return View(model);
             }
 
@@ -205,7 +186,7 @@ namespace IskoAlert_WebApp.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                PopulateDropdowns(model);
+                DropdownHelper.PopulateLostFoundDropdowns(model);
                 return View(model);
             }
         }
@@ -243,7 +224,7 @@ namespace IskoAlert_WebApp.Controllers
                 SelectedCategory = item.Category
             };
 
-            PopulateDropdowns(model);
+            DropdownHelper.PopulateLostFoundDropdowns(model);
             ViewBag.CurrentImagePath = item.ImagePath; 
             return View("ReportLostItem", model);// Return ReportLostItem view with EditItem model
         }
@@ -253,7 +234,7 @@ namespace IskoAlert_WebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PopulateDropdowns(model);
+                DropdownHelper.PopulateLostFoundDropdowns(model);
                 return View(model);
             }
 
@@ -282,7 +263,7 @@ namespace IskoAlert_WebApp.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                PopulateDropdowns(model);
+                DropdownHelper.PopulateLostFoundDropdowns(model);
                 return View(model);
             }
         }

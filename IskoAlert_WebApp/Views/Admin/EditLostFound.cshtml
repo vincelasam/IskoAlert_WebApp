@@ -1,0 +1,72 @@
+﻿@model IskoAlert_WebApp.Models.ViewModels.LostFound.EditItem
+@using IskoAlert_WebApp.Models.Domain.Enums
+
+@{
+    ViewData["Title"] = "Edit Lost & Found Item";
+    Layout = "_AdminLayout";
+}
+
+<h2 class="text-xl font-bold mb-4">Edit Lost & Found Item</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div asp-validation-summary="All" class="text-red-600 text-sm"></div>
+    </div>
+}
+
+<form asp-action="EditLostFound" method="post" enctype="multipart/form-data" class="space-y-4">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ItemId" />
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="Email" />
+
+    <div>
+        <label class="font-semibold">Title</label>
+        <input asp-for="Title" class="w-full border p-2 rounded" />
+        <span asp-validation-for="Title" class="text-red-500 text-xs"></span>
+    </div>
+
+    <div>
+        <label class="font-semibold">Description</label>
+        <textarea asp-for="Description" class="w-full border p-2 rounded"></textarea>
+        <span asp-validation-for="Description" class="text-red-500 text-xs"></span>
+    </div>
+
+    <div>
+        <label class="font-semibold">Status</label>
+        <select asp-for="LostOrFound" class="w-full border p-2 rounded"
+                asp-items="Html.GetEnumSelectList<ItemStatus>()">
+        </select>
+        <span asp-validation-for="LostOrFound" class="text-red-500 text-xs"></span>
+    </div>
+
+    <div>
+        <label class="font-semibold">Category</label>
+        <select asp-for="SelectedCategory" class="w-full border p-2 rounded"
+                asp-items="Html.GetEnumSelectList<ItemCategory>()">
+        </select>
+        <span asp-validation-for="SelectedCategory" class="text-red-500 text-xs"></span>
+    </div>
+
+    <div>
+        <label class="font-semibold">Campus Location</label>
+        <select asp-for="SelectedCampusLocation" class="w-full border p-2 rounded"
+                asp-items="Html.GetEnumSelectList<CampusLocation>()">
+        </select>
+        <span asp-validation-for="SelectedCampusLocation" class="text-red-500 text-xs"></span>
+    </div>
+
+    <div>
+        <label class="font-semibold">Image</label>
+        <input asp-for="ImageFile" type="file" class="w-full" />
+        @if (ViewBag.CurrentImagePath != null)
+        {
+            <img src="@ViewBag.CurrentImagePath" class="mt-2 w-32 h-32 object-cover rounded" />
+        }
+    </div>
+
+    <button type="submit" class="bg-[#2E7D32] text-white px-4 py-2 rounded hover:bg-green-700">
+        Save Changes
+    </button>
+</form>
