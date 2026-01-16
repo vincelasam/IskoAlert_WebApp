@@ -29,15 +29,55 @@ namespace IskolarAlert.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details() // details ng mga reports
+        public async Task<IActionResult> Details(int id) // details ng mga reports
         {
-            return View();
+            var item = await _lostFoundService.GetItemByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound(); // item not found
+            }
+
+            var model = new LostFoundItemDisplayViewModel
+            {
+                Id = item.ItemId,
+                Title = item.Title,
+                DescriptionPreview = item.Description,
+                Category = item.Category.ToString(),
+                CampusLocation = item.LocationFound.ToString(),
+                Status = item.Status.ToString(),
+                DatePosted = item.DatePosted,
+                ImagePath = item.ImagePath,
+                Email = item.Email
+            };
+
+            return View(model);
         }
+
+
         [HttpGet]
-        public IActionResult MyListings() //Listings ng mga reports
+        [Authorize]
+         public async Task<IActionResult> MyListings()
         {
-            return View();
+            var items = await _lostFoundService.GetUserItemsAsync(CurrentUserId);
+
+            var model = new LostFoundListViewModel
+            {
+                Items = items.Select(x => new LostFoundItemDisplayViewModel
+                {
+                    Id = x.ItemId,
+                    Title = x.Title,
+                    DescriptionPreview = x.Description, // or short version
+                    Category = x.Category.ToString(),
+                    CampusLocation = x.LocationFound.ToString(),
+                    Status = x.Status.ToString(),
+                    DatePosted = x.DatePosted,
+                    ImagePath = x.ImagePath
+                }).ToList()
+            };
+
+            return View(model);
         }
+
 
         [HttpGet]
         public IActionResult ReportLostItem()
