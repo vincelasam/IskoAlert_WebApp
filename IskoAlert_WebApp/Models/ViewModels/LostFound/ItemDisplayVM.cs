@@ -21,6 +21,7 @@ namespace IskoAlert_WebApp.Models.ViewModels.LostFound
         public DateTime DatePosted { get; set; }
 
         public string? ImagePath { get; set; }
+        public string Email { get; set; }
 
     }
 }
