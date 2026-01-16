@@ -3,11 +3,13 @@ using IskoAlert_WebApp.Models.ViewModels.Account;
 using IskoAlert_WebApp.Models.ViewModels.LostFound;
 using IskoAlert_WebApp.Services.Implementations;
 using IskoAlert_WebApp.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace IskolarAlert.Controllers
 {
+    [Authorize]
     public class LostFoundController : Controller
     {
 
@@ -17,6 +19,8 @@ namespace IskolarAlert.Controllers
         {
             _lostFoundService = lostFoundService;
         }
+
+        private int CurrentUserId => int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
 
         [HttpGet]
         public IActionResult Index()
@@ -52,7 +56,7 @@ namespace IskolarAlert.Controllers
 
             try
             {
-                await _lostFoundService.CreateLostItemAsync(model);
+                await _lostFoundService.CreateLostItemAsync(model, CurrentUserId);
 
                 TempData["SuccessMessage"] = "Reporting an Item is successful!";
                 return RedirectToAction("Index");
