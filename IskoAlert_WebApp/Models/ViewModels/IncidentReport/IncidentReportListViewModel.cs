@@ -6,6 +6,9 @@ namespace IskoAlert_WebApp.Models.ViewModels.IncidentReport
     {
         public int ReportId { get; set; }
 
+        public IncidentType IncidentType { get; set; } // ADDED
+
+
         public string Title { get; set; } = string.Empty;
 
         public string CampusLocation { get; set; } = string.Empty;
