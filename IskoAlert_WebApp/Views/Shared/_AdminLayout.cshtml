@@ -4,49 +4,81 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Admin Panel</title>
+
+    @* Scripts and Styles *@
     <script src="https://cdn.tailwindcss.com"></script>
+    @* Kinakailangan para sa dropdown logic *@
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
     <header class="bg-[#800000] text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
 
-            <div class="flex items-center gap-3">
-                <img src="/images/pup-logo.png" alt="Logo" class="h-10 w-10">
-                <div class="leading-tight">
-                    <h1 class="font-bold text-lg tracking-wide">Iskolar Alert</h1>
-                    <p class="text-[10px] text-yellow-400 font-medium uppercase tracking-wider">Admin Portal</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-6">
-
-                <a asp-controller="Notification" asp-action="AdminNotifications" class="relative cursor-pointer hover:text-yellow-400 transition-colors">
-                    <i class="fa-regular fa-bell text-xl"></i>
-                    <span class="absolute -top-1 -right-1 bg-yellow-400 text-[#800000] text-[10px] font-bold px-1 rounded-full">2</span>
-                </a>
-
-                <div class="flex items-center gap-3 pl-6 border-l border-red-800">
-                    <div class="text-right hidden sm:block">
-                        <p class="text-sm font-semibold">Admin User</p>
-                        <p class="text-xs text-yellow-400">System Administrator</p>
-                    </div>
-                    <div class="h-8 w-8 bg-red-800 rounded-full flex items-center justify-center border border-yellow-400">
-                        <i class="fa-solid fa-user-shield text-sm"></i>
+                <div class="flex items-center gap-3">
+                    <img src="/images/pup-logo.png" alt="Logo" class="h-10 w-10">
+                    <div class="leading-tight">
+                        <h1 class="font-bold text-lg tracking-wide">Iskolar Alert</h1>
+                        <p class="text-[10px] text-yellow-400 font-medium uppercase tracking-wider">Admin Portal</p>
                     </div>
                 </div>
 
+                <div class="flex items-center gap-6">
+
+                    <a asp-controller="Notification" asp-action="AdminNotifications" class="relative cursor-pointer hover:text-yellow-400 transition-colors">
+                        <i class="fa-regular fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-yellow-400 text-[#800000] text-[10px] font-bold px-1 rounded-full">2</span>
+                    </a>
+
+                    @* User Profile with Logout Dropdown *@
+                    <div class="relative" x-data="{ open: false }">
+                        @* x-on ang gamit para iwas sa CS0103 error *@
+                        <button x-on:click="open = !open"
+                                x-on:click.outside="open = false"
+                                class="flex items-center gap-3 pl-6 border-l border-red-800 focus:outline-none cursor-pointer group">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-sm font-semibold">Admin User</p>
+                                <p class="text-xs text-yellow-400">System Administrator</p>
+                            </div>
+                            <div class="h-8 w-8 bg-red-800 rounded-full flex items-center justify-center border border-yellow-400 group-hover:bg-red-700 transition-colors">
+                                <i class="fa-solid fa-user-shield text-sm"></i>
+                            </div>
+                        </button>
+
+                        @* Logout Dropdown - Compact (w-max) *@
+                        <div x-show="open"
+                             x-transition
+                             class="absolute right-0 mt-2 w-max bg-white rounded shadow-lg border border-gray-100 py-1 z-50"
+                             style="display: none;">
+
+                            <form asp-controller="Account" asp-action="Logout" method="get">
+                                <button type="submit" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors w-full">
+                                    @* Icon base sa screenshot mo *@
+                                    <i class="fa-solid fa-right-from-bracket text-gray-400"></i>
+                                    <span class="font-medium text-[15px]">Logout</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         @RenderBody()
     </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
