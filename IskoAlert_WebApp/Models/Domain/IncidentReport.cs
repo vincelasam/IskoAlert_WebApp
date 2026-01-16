@@ -20,6 +20,11 @@ namespace IskoAlert_WebApp.Models.Domain
 
         public ReportStatus Status { get; private set; }
 
+        public DateTime? AcceptedAt { get; private set; }
+        public DateTime? InProgressAt { get; private set; }
+        public DateTime? ResolvedAt { get; private set; }
+        public DateTime? RejectedAt { get; private set; }
+
         // SEMI-AUTOMATION: Credibility Analysis Fields
         public int CredibilityScore { get; private set; }
         public bool IsAutoProcessed { get; private set; }
@@ -90,6 +95,9 @@ namespace IskoAlert_WebApp.Models.Domain
             Status = recommendedStatus;
             AnalysisReason = analysisReason;
 
+            if (recommendedStatus == ReportStatus.Accepted) AcceptedAt = DateTime.UtcNow;
+            if (recommendedStatus == ReportStatus.Rejected) RejectedAt = DateTime.UtcNow;
+
             // Store lists as JSON for easy parsing later
             RedFlags = redFlags.Any()
                 ? System.Text.Json.JsonSerializer.Serialize(redFlags)
@@ -139,6 +147,24 @@ namespace IskoAlert_WebApp.Models.Domain
         public void UpdateStatus(ReportStatus newStatus)
         {
             Status = newStatus;
+            var now = DateTime.UtcNow;
+
+            // Record timestamp based on status
+            switch (newStatus)
+            {
+                case ReportStatus.Accepted:
+                    AcceptedAt = now;
+                    break;
+                case ReportStatus.InProgress:
+                    InProgressAt = now;
+                    break;
+                case ReportStatus.Resolved:
+                    ResolvedAt = now;
+                    break;
+                case ReportStatus.Rejected:
+                    RejectedAt = now;
+                    break;
+            }
         }
 
         public void UpdateImage(string imagePath)

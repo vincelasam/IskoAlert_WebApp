@@ -78,6 +78,18 @@ namespace IskoAlert_WebApp.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<IncidentReport>()
+                .Property(i => i.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<IncidentReport>()
+                .Property(i => i.IncidentType)
+                .HasConversion<string>(); // Recommended if you want types like "Theft" readable in DB
+
             //// 4. NOTIFICATION CONFIGURATION
             //modelBuilder.Entity<Notification>(entity =>
             //{

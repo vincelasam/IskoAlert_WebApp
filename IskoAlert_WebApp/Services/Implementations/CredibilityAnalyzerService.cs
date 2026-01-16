@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace IskoAlert_WebApp.Services.Implementations
 {
-    /// <summary>
+
     /// Result of credibility analysis for an incident report
-    /// </summary>
+
     public class CredibilityAnalysisResult
     {
         public int CredibilityScore { get; set; }
@@ -18,21 +18,21 @@ namespace IskoAlert_WebApp.Services.Implementations
         public ReportStatus RecommendedAction { get; set; }
     }
 
-    /// <summary>
+
     /// Service that analyzes incident reports for credibility
-    /// IMPROVED: Better spam detection, quality checks, and meaningful content validation
-    /// </summary>
+    ///  Better spam detection, quality checks, and meaningful content validation
+
     public class CredibilityAnalyzerService : ICredibilityAnalyzerService
     {
         // Scoring thresholds
-        private const int AUTO_ACCEPT_THRESHOLD = 75;
-        private const int AUTO_REJECT_THRESHOLD = 30;
+        private const int AUTO_ACCEPT_THRESHOLD = 90;
+        private const int AUTO_REJECT_THRESHOLD = 20;
 
         public CredibilityAnalysisResult AnalyzeReport(IncidentReport report)
         {
             var result = new CredibilityAnalysisResult
             {
-                CredibilityScore = 50, // Start at neutral score
+                CredibilityScore = 40, // Start at neutral score
                 RequiresManualReview = false,
                 RedFlags = new List<string>(),
                 PositiveSignals = new List<string>()
@@ -57,10 +57,8 @@ namespace IskoAlert_WebApp.Services.Implementations
             // 3. Photo Evidence Analysis
             AnalyzePhotoEvidence(report, result);
 
-            // 4. Location Specificity Analysis
-            AnalyzeLocationSpecificity(report, result);
 
-            // 5. Incident Type Consistency
+            // 4. Incident Type Consistency
             AnalyzeIncidentType(report, result);
 
             // === DETERMINE FINAL SCORE AND ACTION ===
@@ -76,7 +74,6 @@ namespace IskoAlert_WebApp.Services.Implementations
                 result.AnalysisReason = $"AUTOMATED ACCEPTANCE (Score: {result.CredibilityScore}/100)\n\n" +
                     "This report has been automatically accepted based on high credibility indicators:\n" +
                     "- Detailed and specific description\n" +
-                    "- Clear location information\n" +
                     "- Evidence provided (if applicable)\n\n" +
                     "The report has been forwarded to campus security for immediate action.";
             }
@@ -110,10 +107,10 @@ namespace IskoAlert_WebApp.Services.Implementations
             return result;
         }
 
-        /// <summary>
+        
         /// NEW: Detects spam and low-quality submissions
         /// Returns true if spam is detected
-        /// </summary>
+       
         private bool DetectSpam(IncidentReport report, CredibilityAnalysisResult result)
         {
             var description = report.Description ?? string.Empty;
@@ -173,9 +170,9 @@ namespace IskoAlert_WebApp.Services.Implementations
             return isSpam;
         }
 
-        /// <summary>
+        
         /// NEW: Checks if text has many repeated characters
-        /// </summary>
+       
         private bool HasRepeatedCharacters(string text, int threshold)
         {
             if (string.IsNullOrEmpty(text) || text.Length < threshold) return false;
@@ -199,9 +196,9 @@ namespace IskoAlert_WebApp.Services.Implementations
             return maxConsecutive >= threshold;
         }
 
-        /// <summary>
+        
         /// NEW: Checks if text has many repeated words
-        /// </summary>
+       
         private bool HasRepeatedWords(string text, int threshold)
         {
             if (string.IsNullOrEmpty(text)) return false;
@@ -215,9 +212,9 @@ namespace IskoAlert_WebApp.Services.Implementations
             return maxRepeats >= threshold;
         }
 
-        /// <summary>
+        
         /// Analyzes the length of the description
-        /// </summary>
+       
         private void AnalyzeDescriptionLength(IncidentReport report, CredibilityAnalysisResult result)
         {
             var descriptionLength = report.Description?.Length ?? 0;
@@ -244,10 +241,9 @@ namespace IskoAlert_WebApp.Services.Implementations
             }
         }
 
-        /// <summary>
         /// IMPROVED: Analyzes the quality and specificity of the description
         /// Now checks for meaningful content, not just keywords
-        /// </summary>
+
         private void AnalyzeDescriptionQuality(IncidentReport report, CredibilityAnalysisResult result)
         {
             var description = report.Description?.ToLower() ?? string.Empty;
@@ -321,9 +317,9 @@ namespace IskoAlert_WebApp.Services.Implementations
             }
         }
 
-        /// <summary>
+        
         /// Analyzes whether photo evidence was provided
-        /// </summary>
+       
         private void AnalyzePhotoEvidence(IncidentReport report, CredibilityAnalysisResult result)
         {
             if (!string.IsNullOrEmpty(report.ImagePath))
@@ -338,34 +334,11 @@ namespace IskoAlert_WebApp.Services.Implementations
             }
         }
 
-        /// <summary>
-        /// Analyzes the specificity of the location
-        /// </summary>
-        private void AnalyzeLocationSpecificity(IncidentReport report, CredibilityAnalysisResult result)
-        {
-            var location = report.CampusLocation ?? string.Empty;
+       
 
-            if (string.IsNullOrWhiteSpace(location))
-            {
-                result.CredibilityScore -= 20;
-                result.RedFlags.Add("No location specified");
-            }
-            else if (location.Contains("-")) // e.g., "Main Building - West Wing"
-            {
-                result.CredibilityScore += 10;
-                result.PositiveSignals.Add("Specific location provided (building and wing/area)");
-            }
-            else
-            {
-                result.CredibilityScore += 5;
-                result.PositiveSignals.Add("General location provided");
-            }
-        }
-
-        /// <summary>
         /// Checks if the incident type matches common patterns in description
         /// Uses IncidentType enum instead of Title
-        /// </summary>
+
         private void AnalyzeIncidentType(IncidentReport report, CredibilityAnalysisResult result)
         {
             var description = report.Description?.ToLower() ?? string.Empty;
