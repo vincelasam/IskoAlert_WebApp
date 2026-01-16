@@ -1,0 +1,208 @@
+@{
+    ViewData["Title"] = "Home";
+    Layout = "_LandingLayout";
+}
+
+<!-- Hero Section with Background Image -->
+<section class="relative min-h-[600px] flex items-center justify-center bg-cover bg-center bg-no-repeat" style="background-image: url('/images/hero-background.jpg');">
+    <div class="absolute inset-0 bg-[#800000]/80"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white py-20">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg">Iskolar Alert: PUP Incident Report & Lost and Found</h1>
+        <p class="text-xl md:text-2xl text-yellow-400 font-semibold mb-6 drop-shadow-md">Your campus safety and community support platform</p>
+        <p class="text-lg md:text-xl mb-8 max-w-3xl mx-auto drop-shadow-md">
+            Report incidents, track lost items, and stay connected with the PUP Manila campus community. A dedicated platform for students and administrators to ensure a safer campus environment.
+        </p>
+        <a asp-controller="Account" asp-action="Login" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-[#800000] font-bold text-lg px-8 py-4 rounded-lg transition-colors shadow-lg hover:shadow-xl">
+            Get Started
+        </a>
+    </div>
+</section>
+
+<!-- Key Features Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#800000] mb-3">Key Features</h2>
+            <p class="text-lg text-gray-600">Everything you need to stay safe and connected on campus</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1: Report Campus Incidents -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 hover:shadow-lg transition-shadow">
+                <div class="h-16 w-16 rounded-full bg-[#800000] flex items-center justify-center mb-6 mx-auto">
+                    <i class="fa-solid fa-circle-exclamation text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Report Campus Incidents</h3>
+                <p class="text-gray-600 text-center">Quickly report security concerns, accidents, or emergencies happening on campus with detailed location tracking.</p>
+            </div>
+
+            <!-- Feature 2: Lost & Found System -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 hover:shadow-lg transition-shadow">
+                <div class="h-16 w-16 rounded-full bg-[#800000] flex items-center justify-center mb-6 mx-auto">
+                    <i class="fa-solid fa-magnifying-glass text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Lost & Found System</h3>
+                <p class="text-gray-600 text-center">Post and search for lost items with photo uploads (up to 2MB) and detailed descriptions to reunite owners with their belongings.</p>
+            </div>
+
+            <!-- Feature 3: Real-time Tracking -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 hover:shadow-lg transition-shadow">
+                <div class="h-16 w-16 rounded-full bg-[#800000] flex items-center justify-center mb-6 mx-auto">
+                    <i class="fa-solid fa-chart-line text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Real-time Tracking</h3>
+                <p class="text-gray-600 text-center">Monitor your incident reports and receive updates throughout the resolution process with status notifications.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Built for Everyone Section -->
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#800000] mb-3">Built for Everyone</h2>
+            <p class="text-lg text-gray-600">Tailored features for students and administrators</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- For Students -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 hover:shadow-lg transition-shadow">
+                <div class="h-16 w-16 rounded-full bg-[#800000] flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-user text-white text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">For Students</h3>
+                <ul class="space-y-3 text-gray-600">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-yellow-400 mt-1"></i>
+                        <span>Submit incident reports for campus safety concerns</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-yellow-400 mt-1"></i>
+                        <span>Post and search for lost or found items</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-yellow-400 mt-1"></i>
+                        <span>Track report status with real-time notifications</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-yellow-400 mt-1"></i>
+                        <span>Rate resolved incidents to improve service quality</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- For Administrators -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 hover:shadow-lg transition-shadow">
+                <div class="h-16 w-16 rounded-full bg-[#800000] flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-gear text-white text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">For Administrators</h3>
+                <ul class="space-y-3 text-gray-600">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-yellow-400 mt-1"></i>
+                        <span>Manage all incident reports from students</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-yellow-400 mt-1"></i>
+                        <span>Update incident statuses and track progress</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-yellow-400 mt-1"></i>
+                        <span>Oversee lost & found system with archive management</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-yellow-400 mt-1"></i>
+                        <span>View analytics and ratings for continuous improvement</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Serving PUP Manila Campus Section -->
+<section class="py-16 bg-[#800000] text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-3">Serving PUP Manila Campus</h2>
+            <p class="text-lg text-yellow-400">Committed to campus safety and community support</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Secure Reporting -->
+            <div class="text-center">
+                <div class="h-20 w-20 rounded-full bg-yellow-400 flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-shield-halved text-[#800000] text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Secure Reporting</h3>
+            <p class="text-gray-200">Your reports are handled with confidentiality and care.</p>
+        </div>
+
+            <!-- Quick Response -->
+            <div class="text-center">
+                <div class="h-20 w-20 rounded-full bg-yellow-400 flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-clock text-[#800000] text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Quick Response</h3>
+                <p class="text-gray-200">Fast incident processing and status updates.</p>
+            </div>
+
+            <!-- Community Driven -->
+            <div class="text-center">
+                <div class="h-20 w-20 rounded-full bg-yellow-400 flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-users text-[#800000] text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Community Driven</h3>
+                <p class="text-gray-200">Built to serve the entire PUP Manila community.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Team Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#800000] mb-3">Our Team</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            <!-- Team Member 1: John Rich Nicolas -->
+            <div class="text-center">
+                <div class="mb-4">
+                    <img src="/images/team/john-rich-nicolas.jpg" alt="John Rich Nicolas" class="w-32 h-32 rounded-full object-cover mx-auto border-4 border-[#800000] shadow-lg">
+                </div>
+                <h3 class="text-lg font-bold text-gray-900">John Rich Nicolas</h3>
+                <p class="text-sm text-gray-600">Member 1</p>
+            </div>
+
+            <!-- Team Member 2: Jeff Petterson Mercado -->
+            <div class="text-center">
+                <div class="mb-4">
+                    <img src="/images/team/jeff-petterson-mercado.jpg" alt="Jeff Petterson Mercado" class="w-32 h-32 rounded-full object-cover mx-auto border-4 border-[#800000] shadow-lg">
+                </div>
+                <h3 class="text-lg font-bold text-gray-900">Jeff Petterson Mercado</h3>
+                <p class="text-sm text-gray-600">Member 2</p>
+            </div>
+
+            <!-- Team Member 3: Vince Michael Lasam -->
+            <div class="text-center">
+                <div class="mb-4">
+                    <img src="/images/team/vince-michael-lasam.jpg" alt="Vince Michael Lasam" class="w-32 h-32 rounded-full object-cover mx-auto border-4 border-[#800000] shadow-lg">
+                </div>
+                <h3 class="text-lg font-bold text-gray-900">Vince Michael Lasam</h3>
+                <p class="text-sm text-gray-600">Member 3</p>
+            </div>
+
+            <!-- Team Member 4: Lian Luigi Paredes -->
+            <div class="text-center">
+                <div class="mb-4">
+                    <img src="/images/team/lian-luigi-paredes.jpg" alt="Lian Luigi Paredes" class="w-32 h-32 rounded-full object-cover mx-auto border-4 border-[#800000] shadow-lg">
+                </div>
+                <h3 class="text-lg font-bold text-gray-900">Lian Luigi Paredes</h3>
+                <p class="text-sm text-gray-600">Member 4</p>
+            </div>
+        </div>
+    </div>
+</section>

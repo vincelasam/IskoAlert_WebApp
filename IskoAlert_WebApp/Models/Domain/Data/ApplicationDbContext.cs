@@ -13,7 +13,7 @@ namespace IskoAlert_WebApp.Data
         // --- Core Tables based on SRS Documentation ---
         public DbSet<User> Users { get; set; }
         public DbSet<IncidentReport> IncidentReports { get; set; }
-        //public DbSet<LostFoundItem> LostAndFoundItems { get; set; }
+        public DbSet<LostFoundItem> LostFoundItems { get; set; }
         //public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -59,24 +59,24 @@ namespace IskoAlert_WebApp.Data
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
-            //// 3. LOST AND FOUND CONFIGURATION
-            //modelBuilder.Entity<LostFoundItem>(entity =>
-            //{
-            //    entity.HasKey(lfi => lfi.ItemId);
-            //    entity.Property(lfi => lfi.ItemName).IsRequired().HasMaxLength(100);
-            //    entity.Property(lfi => lfi.Description).HasMaxLength(500);
-            //    entity.Property(lfi => lfi.LocationFound).IsRequired().HasMaxLength(150);
-            //    entity.Property(lfi => lfi.ItemImagePath).HasMaxLength(255);
+            modelBuilder.Entity<LostFoundItem>(entity =>
+            {
+                entity.HasKey(lfi => lfi.ItemId);
+                entity.Property(lfi => lfi.Title).IsRequired().HasMaxLength(100);
+                entity.Property(lfi => lfi.Description).HasMaxLength(500);
+                entity.Property(lfi => lfi.Email).IsRequired().HasMaxLength(50);
+                entity.Property(lfi => lfi.LocationFound).IsRequired().HasMaxLength(150);
+                entity.Property(lfi => lfi.ImagePath).HasMaxLength(255);
 
-            //    // Enums: Status (Lost, Found, Claimed), Category
-            //    entity.Property(lfi => lfi.Status).HasConversion<string>().IsRequired();
-            //    entity.Property(lfi => lfi.Category).HasConversion<string>().IsRequired();
+                // Enums: Status (Lost, Found, Claimed), Category
+                entity.Property(lfi => lfi.Status).HasConversion<string>().IsRequired();
+                entity.Property(lfi => lfi.Category).HasConversion<string>().IsRequired();
 
-            //    entity.HasOne(lfi => lfi.User)
-            //          .WithMany()
-            //          .HasForeignKey(lfi => lfi.UserId)
-            //          .OnDelete(DeleteBehavior.Cascade);
-            //});
+                entity.HasOne(lfi => lfi.User)
+                      .WithMany()
+                      .HasForeignKey(lfi => lfi.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
             //// 4. NOTIFICATION CONFIGURATION
             //modelBuilder.Entity<Notification>(entity =>

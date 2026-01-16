@@ -25,6 +25,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     )
 );
 
+// l
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // Configure Authentication services
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
@@ -63,6 +72,15 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseSession();
+
+// Identifies who the user is
+app.UseAuthentication();
+
+// Determines what the user can access
+app.UseAuthorization();
+
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -79,8 +97,9 @@ app.UseAuthentication(); // Checks "Who are you?" (Cookies)
 app.UseAuthorization();  // Checks "Allowed to be here?" (Roles)
 
 
+// Default route: Landing page first, then users can navigate to Login
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=Landing}/{action=Index}/{id?}");
 
 app.Run();

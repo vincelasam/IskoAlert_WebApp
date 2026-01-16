@@ -1,53 +1,45 @@
-﻿@{
+﻿@model IskoAlert_WebApp.Models.ViewModels.LostFound.LostFoundItemDisplayViewModel
+
+@{
     ViewData["Title"] = "Item Details";
 }
 
 <div class="max-w-4xl mx-auto">
-
     <a asp-controller="LostFound" asp-action="Index" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#800000] mb-6 transition-colors">
         <i class="fa-solid fa-arrow-left"></i>
         Back to Lost & Found
     </a>
 
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-
         <div class="grid grid-cols-1 md:grid-cols-2">
-
             <div class="bg-gray-100 h-64 md:h-auto relative group">
-                <img src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                     alt="Lost Item"
-                     class="w-full h-full object-cover">
+                <img src="@Model.ImagePath" alt="@Model.Title" class="w-full h-full object-cover">
                 <div class="absolute top-4 left-4">
-                    <span class="bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md uppercase tracking-wide">Found Item</span>
+                    <span class="bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md uppercase tracking-wide">@Model.Status</span>
                 </div>
             </div>
 
             <div class="p-8">
-
                 <div class="flex justify-between items-start mb-4">
                     <div>
-                        <span class="text-[#800000] font-semibold text-xs uppercase tracking-wider">Electronics</span>
-                        <h1 class="text-2xl font-bold text-gray-900 mt-1">Black iPhone 13 Pro</h1>
+                        <span class="text-[#800000] font-semibold text-xs uppercase tracking-wider">@Model.Category</span>
+                        <h1 class="text-2xl font-bold text-gray-900 mt-1">@Model.Title</h1>
                     </div>
                     <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-share-nodes"></i></button>
                 </div>
 
                 <div class="space-y-6">
-
                     <div>
                         <h3 class="text-sm font-bold text-gray-900 mb-2">Description</h3>
-                        <p class="text-sm text-gray-600 leading-relaxed">
-                            Found in the library reading area with a cracked screen protector. The phone is locked and has a clear case with some stickers on the back.
-                        </p>
+                        <p class="text-sm text-gray-600 leading-relaxed">@Model.DescriptionPreview</p>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
-
                         <div>
                             <span class="block text-xs text-gray-500 mb-1">Location Found</span>
                             <div class="flex items-center gap-2 text-sm font-semibold text-gray-800">
                                 <i class="fa-solid fa-location-dot text-[#800000]"></i>
-                                Main Library
+                                @Model.CampusLocation
                             </div>
                         </div>
 
@@ -55,7 +47,7 @@
                             <span class="block text-xs text-gray-500 mb-1">Date Found</span>
                             <div class="flex items-center gap-2 text-sm font-semibold text-gray-800">
                                 <i class="fa-regular fa-calendar text-[#800000]"></i>
-                                Jan 3, 2026
+                                @Model.DatePosted.ToString("MMM d, yyyy")
                             </div>
                         </div>
                     </div>
@@ -68,18 +60,17 @@
                                     <i class="fa-solid fa-user"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-bold text-gray-900">Lian Paredes</p>
-                                    <p class="text-xs text-gray-500">lian.paredes@pup.edu.ph</p>
+                                    <p class="text-sm font-bold text-gray-900">Finder</p>
+                                    <p class="text-xs text-gray-500">@Model.Email</p>
                                 </div>
                             </div>
-                            <a href="mailto:lian.paredes@pup.edu.ph" class="text-sm font-semibold text-[#800000] hover:underline">
+                            <a href="mailto:@Model.Email" class="text-sm font-semibold text-[#800000] hover:underline">
                                 Send Email
                             </a>
                         </div>
                     </div>
 
                 </div>
-
             </div>
         </div>
     </div>
