@@ -70,13 +70,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseSession();
 
-// Identifies who the user is
-app.UseAuthentication();
 
-// Determines what the user can access
-app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -92,15 +87,16 @@ app.UseHttpsRedirection();
 app.UseStaticFiles(); 
 
 app.UseRouting();
+app.UseSession();
 
+// Identifies who the user is
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Default route: Landing page first, then users can navigate to Login
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Landing}/{action=Index}/{id?}");
-
-
 
 
 app.Run();
