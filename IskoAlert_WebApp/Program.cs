@@ -22,6 +22,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         )
     )
 );
+
+builder.Services.AddAuthentication("MyCookieAuth")
+    .AddCookie("MyCookieAuth", options =>
+    {
+        options.LoginPath = "/Account/Login";   // redirect here if not logged in
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    });
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -64,6 +72,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // FIX: This sets the startup page to Account/Login

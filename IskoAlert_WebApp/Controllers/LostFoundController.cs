@@ -54,8 +54,7 @@ namespace IskolarAlert.Controllers
         }
 
 
-        [HttpGet]
-        [Authorize]
+        [HttpGet]   
          public async Task<IActionResult> MyListings()
         {
             var items = await _lostFoundService.GetUserItemsAsync(CurrentUserId);
