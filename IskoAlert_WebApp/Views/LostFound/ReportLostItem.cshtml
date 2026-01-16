@@ -1,123 +1,199 @@
+@model IskoAlert_WebApp.Models.ViewModels.LostFound.EditItem
+@using IskoAlert_WebApp.Models.Domain.Enums
 @{
-    ViewData["Title"] = "Report Lost or Found Item"; //gawin nating create
+    var isEditMode = Model.ItemId > 0;
+    ViewData["Title"] = isEditMode ? "Edit Item" : "Report Lost or Found Item";
 }
 
 <div class="max-w-3xl mx-auto">
 
-    <a asp-controller="Home" asp-action="Index" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#800000] mb-6 transition-colors">
+    <a asp-controller="LostFound" asp-action="@(isEditMode ? "MyListings" : "Index")" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#800000] mb-6 transition-colors">
         <i class="fa-solid fa-arrow-left"></i>
-        Back to Lost & Found
+        Back to @(isEditMode ? "My Listings" : "Lost & Found")
     </a>
 
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
 
         <div class="mb-8">
-            <h2 class="text-xl font-bold text-gray-900">Report Lost or Found Item</h2>
-            <p class="text-sm text-gray-500 mt-1">Help the community by reporting lost or found items</p>
+            <h2 class="text-xl font-bold text-gray-900">@(isEditMode ? "Edit Item" : "Report Lost or Found Item")</h2>
+            <p class="text-sm text-gray-500 mt-1">@(isEditMode ? "Update your lost or found item details" : "Help the community by reporting lost or found items")</p>
         </div>
 
-        <form class="space-y-6">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div asp-validation-summary="All" class="text-red-600 text-sm"></div>
+            </div>
+        }
+
+        <form asp-controller="LostFound"
+              asp-action="@(isEditMode ? "UpdateItem" : "ReportLostItem")"
+              method="post"
+              enctype="multipart/form-data"
+              class="space-y-6">
+            @Html.AntiForgeryToken()
+            
+            @if (isEditMode)
+            {
+                <input type="hidden" asp-for="ItemId" />
+                <input type="hidden" asp-for="UserId" />
+            }
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-3">Item Status <span class="text-red-500">*</span></label>
                 <div class="space-y-2">
                     <div class="flex items-center">
-                        <input id="status-lost" type="radio" name="itemStatus" value="lost" class="w-4 h-4 text-[#800000] bg-gray-100 border-gray-300 focus:ring-[#800000]" checked>
+                        <input id="status-lost"
+                               type="radio"
+                               asp-for="LostOrFound"
+                               value="@((int)ItemStatus.Lost)"
+                               class="w-4 h-4 text-[#800000] bg-gray-100 border-gray-300 focus:ring-[#800000]"
+                               checked="@(Model.LostOrFound == ItemStatus.Lost)">
                         <label for="status-lost" class="ml-2 text-sm font-medium text-gray-900">Lost - I lost this item</label>
                     </div>
                     <div class="flex items-center">
-                        <input id="status-found" type="radio" name="itemStatus" value="found" class="w-4 h-4 text-[#800000] bg-gray-100 border-gray-300 focus:ring-[#800000]">
+                        <input id="status-found"
+                               type="radio"
+                               asp-for="LostOrFound"
+                               value="@((int)ItemStatus.Found)"
+                               class="w-4 h-4 text-[#800000] bg-gray-100 border-gray-300 focus:ring-[#800000]"
+                               checked="@(Model.LostOrFound == ItemStatus.Found)">
                         <label for="status-found" class="ml-2 text-sm font-medium text-gray-900">Found - I found this item</label>
                     </div>
                 </div>
+                <span asp-validation-for="LostOrFound" class="text-red-500 text-xs"></span>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Item Name <span class="text-red-500">*</span></label>
                 <input type="text"
+                       asp-for="Title"
                        placeholder="e.g., Blue Umbrella, Student ID"
                        class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block w-full p-3 transition-colors">
+                <span asp-validation-for="Title" class="text-red-500 text-xs"></span>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Category <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <select class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
-                        <option value="" disabled selected>Select category</option>
-                        <option>Electronics</option>
-                        <option>Clothing</option>
-                        <option>Book</option>
-                        <option>Personal Items</option>
-                        <option>Documents/IDs</option>
-                        <option>Accessories</option>
-                        <option>Other</option>
+                    <select asp-for="SelectedCategory"
+                            asp-items="Model.Category"
+                            class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
+                        <option value="">Select category</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                         <i class="fa-solid fa-chevron-down text-xs"></i>
                     </div>
                 </div>
+                <span asp-validation-for="SelectedCategory" class="text-red-500 text-xs"></span>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
                 <textarea rows="4"
+                          asp-for="Description"
                           placeholder="Provide details about the item (color, brand, distinguishing features)..."
                           class="block w-full p-3 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-200 focus:ring-[#800000] focus:border-[#800000]"></textarea>
+                <span asp-validation-for="Description" class="text-red-500 text-xs"></span>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Location <span class="text-xs font-normal text-gray-500 ml-1">*(Last seen)*</span></label>
                 <div class="relative">
-                    <select class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
-                        <option value="" disabled selected>Select location</option>
-                        <option>Main Building - West Wing</option>
-                        <option>Main Building - East Wing</option>
-                        <option>Main Building - South Wing</option>
-                        <option>Main Building - North Wing</option>
-                        <option>Lagoon Area</option>
-                        <option>Track Oval</option>
-                        <option>Gymnasium</option>
-                        <option>Library</option>
-                        <option>Canteen</option>
+                    <select asp-for="SelectedCampusLocation"
+                            asp-items="Model.CampusLocations"
+                            class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-3 appearance-none">
+                        <option value="">Select location</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                         <i class="fa-solid fa-chevron-down text-xs"></i>
                     </div>
                 </div>
                 <p class="text-xs text-gray-500 mt-1.5">Select the PUP Main Campus building or area</p>
+                <span asp-validation-for="SelectedCampusLocation" class="text-red-500 text-xs"></span>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Contact Information <span class="text-red-500">*</span></label>
-                <input type="text"
-                       value="your.email@pup.edu.ph"
+                <input type="email"
+                       asp-for="Email"
+                       placeholder="your.email@pup.edu.ph"
                        class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block w-full p-3 transition-colors">
+                <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Photo (Optional)</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Upload Photo 
+                    @if (!isEditMode)
+                    {
+                        <span class="text-red-500">*</span>
+                    }
+                    else
+                    {
+                        <span class="text-xs font-normal text-gray-500 ml-1">(Optional - only upload if you want to change the image)</span>
+                    }
+                </label>
+                
+                @if (isEditMode && !string.IsNullOrEmpty(ViewBag.CurrentImagePath))
+                {
+                    <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p class="text-sm font-semibold text-blue-900 mb-2">Current Image:</p>
+                        <img src="@ViewBag.CurrentImagePath" alt="Current item image" class="max-w-full h-48 object-contain rounded-lg border border-gray-200" />
+                    </div>
+                }
+                
                 <div class="flex items-center justify-center w-full">
                     <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <div id="upload-placeholder" class="flex flex-col items-center justify-center pt-5 pb-6">
                             <i class="fa-solid fa-arrow-up-from-bracket text-2xl text-gray-400 mb-3"></i>
                             <p class="mb-1 text-sm font-bold text-[#800000]">Choose a file</p>
                             <p class="text-sm text-gray-500">or drag and drop</p>
                             <p class="text-xs text-gray-400 mt-1">PNG, JPG up to 2MB</p>
                         </div>
-                        <input id="dropzone-file" type="file" class="hidden" />
+                        <input id="dropzone-file" asp-for="ImageFile" type="file" accept="image/jpeg,image/jpg,image/png" class="hidden" />
                     </label>
+                </div>
+                @if (!isEditMode)
+                {
+                    <span asp-validation-for="ImageFile" class="text-red-500 text-xs"></span>
+                }
+
+                <!-- File Selected Display -->
+                <div id="file-selected-display" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-check-circle text-green-600 text-xl"></i>
+                            <div>
+                                <p class="text-sm font-semibold text-green-900" id="file-name">File selected</p>
+                                <p class="text-xs text-green-700" id="file-size"></p>
+                            </div>
+                        </div>
+                        <button type="button"
+                                id="remove-file-btn"
+                                class="text-red-600 hover:text-red-800 transition-colors">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="image-preview" class="mt-3 hidden">
+                        <img id="preview-img" src="" alt="Preview" class="max-w-full h-48 object-contain rounded-lg border border-gray-200" />
+                    </div>
                 </div>
             </div>
 
             <div class="flex gap-4 pt-4">
-                <a asp-controller="LostFound" asp-action="Index" class="w-full py-3 px-5 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 hover:text-gray-900 text-center transition-colors">
+                <a asp-controller="LostFound" asp-action="@(isEditMode ? "MyListings" : "Index")" class="w-full py-3 px-5 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 hover:text-gray-900 text-center transition-colors">
                     Cancel
                 </a>
-                <button type="button" class="w-full py-3 px-5 text-sm font-semibold text-white bg-[#800000] rounded-lg hover:bg-red-900 transition-colors shadow-sm">
-                    Submit
+                <button type="submit" class="w-full py-3 px-5 text-sm font-semibold text-white bg-[#800000] rounded-lg hover:bg-red-900 transition-colors shadow-sm">
+                    @(isEditMode ? "Update Item" : "Submit")
                 </button>
             </div>
 
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/upload-photo.js"></script>
+}
