@@ -1,5 +1,5 @@
 @model IskoAlert_WebApp.Models.ViewModels.Dashboard.DashboardViewModel
-
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,13 +37,30 @@
                         <span class="absolute -top-1 -right-1 bg-yellow-400 text-[#800000] text-[10px] font-bold px-1 rounded-full">2</span>
                     </a>
 
-                    <div class="flex items-center gap-3 pl-6 border-l border-red-800">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-semibold">@Model.FullName</p>
-                            <p class="text-xs text-yellow-400">@Model.Role</p>
-                        </div>
-                        <div class="h-8 w-8 bg-red-800 rounded-full flex items-center justify-center border border-yellow-400">
-                            <i class="fa-regular fa-user text-sm"></i>
+                    <div class="relative" x-data="{ open: false }">
+                        <button x-on:click="open = !open"
+                                x-on:click.outside="open = false"
+                                class="flex items-center gap-3 pl-6 border-l border-red-800 focus:outline-none cursor-pointer">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-sm font-semibold text-white">@Model.FullName</p>
+                                <p class="text-xs text-yellow-400">@Model.Role</p>
+                            </div>
+                            <div class="h-8 w-8 bg-red-800 rounded-full flex items-center justify-center border border-yellow-400 hover:bg-red-700 transition-colors">
+                                <i class="fa-regular fa-user text-sm text-white"></i>
+                            </div>
+                        </button>
+
+                        <div x-show="open"
+                             x-transition
+                             class="absolute right-0 mt-2 w-max bg-white rounded-md shadow-lg border border-gray-100 py-1 z-50"
+                             style="display: none;">
+
+                            <form asp-controller="Account" asp-action="Logout" method="get">
+                                <button type="submit" class="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="fa-solid fa-right-from-bracket text-gray-400"></i>
+                                    <span class="font-medium text-sm">Logout</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
 
