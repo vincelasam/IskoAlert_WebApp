@@ -6,9 +6,14 @@
         public class LostFoundItem
         {
             public int ItemId { get; private set; }
-            public int UserId { get; private set; }
-            
-            public string Title { get; private set; }
+        // Foreign Key pointing to User.UserId
+        public int UserId { get; private set; }
+
+        // Navigation Property
+        // This links this report to the User entity in the database
+        public User User { get; private set; }
+
+        public string Title { get; private set; }
             public string Description { get; private set; }
             public string Email { get; private set; }
             public CampusLocation LocationFound { get; private set; }
@@ -21,7 +26,7 @@
 
             public LostFoundItem(string title, string description, string email, CampusLocation location, ItemCategory category)
             {
-                if (string.IsNullOrWhiteSpace(name))
+                if (string.IsNullOrWhiteSpace(title))
                     throw new ArgumentException("Item name is required.");
                 if (string.IsNullOrWhiteSpace(description))
                     throw new ArgumentException("Description is required.");
