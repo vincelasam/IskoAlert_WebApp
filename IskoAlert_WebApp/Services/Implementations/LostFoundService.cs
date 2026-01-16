@@ -71,7 +71,7 @@ namespace IskoAlert_WebApp.Services.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<LostFoundItem>> GetAllItemsAsync(string keyword)
+        public async Task<List<LostFoundItem>> GetAllItemsAsync(string? keyword)
         {
             var query = _context.LostFoundItems
                 .AsNoTracking()
@@ -104,7 +104,7 @@ namespace IskoAlert_WebApp.Services.Implementations
             return await _context.LostFoundItems.FirstOrDefaultAsync(x => x.ItemId == itemId);
         }
 
-        public async Task DeleteItemAsync(int itemId, int userId)
+        public async Task ArchiveItemAsync(int itemId, int userId)
         {
             // Fetch the item from the database
             var item = await _context.LostFoundItems
