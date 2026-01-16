@@ -92,14 +92,16 @@
                         <div class="mt-1"><i class="fa-regular fa-calendar text-gray-400"></i></div>
                         <div>
                             <p class="text-xs text-gray-500">Date Submitted</p>
-                            <p class="font-medium text-gray-900">@Model.CreatedAt.ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
+                            <p class="font-medium text-gray-900">@Model.CreatedAt.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
                         <div class="mt-1"><i class="fa-regular fa-calendar-check text-gray-400"></i></div>
                         <div>
                             <p class="text-xs text-gray-500">Last Updated</p>
-                            <p class="font-medium text-gray-900">@DateTime.Now.ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
+                            <p class="font-medium text-gray-900">
+                                @((Model.ResolvedAt ?? Model.RejectedAt ?? Model.InProgressAt ?? Model.AcceptedAt ?? Model.CreatedAt).AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt"))
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -149,25 +151,32 @@
                     <div class="relative">
                         <div class="absolute -left-[21px] mt-1.5 h-3 w-3 rounded-full @(Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Pending ? "bg-orange-500 border-4 border-white" : "bg-gray-400") border-2 border-white"></div>
                         <span class="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">Pending</span>
-                        <p class="text-xs text-gray-500 mt-1">@Model.CreatedAt.ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
+                        <p class="text-xs text-gray-500 mt-1">@Model.CreatedAt.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
                     </div>
 
-                    @if (Model.Status >= IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Accepted)
+                    @if (Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Accepted ||
+                                        Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress ||
+                                        Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Resolved)
                     {
                         <div class="relative">
                             <div class="absolute -left-[21px] mt-1.5 h-3 w-3 rounded-full @(Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Accepted ? "bg-blue-500 border-4 border-white" : "bg-gray-400") border-2 border-white"></div>
                             <span class="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">Accepted</span>
-                            <p class="text-xs text-gray-500 mt-1">@Model.CreatedAt.AddHours(4).ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
+                            <p class="text-xs text-gray-500 mt-1">
+                                @(Model.AcceptedAt?.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt") ?? "Verified")
+                            </p>
                             <p class="text-xs text-gray-400 italic mt-0.5">"Report received and verified"</p>
                         </div>
                     }
 
-                    @if (Model.Status >= IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress)
+                    @if (Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress ||
+                                        Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.Resolved)
                     {
                         <div class="relative">
                             <div class="absolute -left-[21px] mt-1.5 h-3 w-3 rounded-full @(Model.Status == IskoAlert_WebApp.Models.Domain.Enums.ReportStatus.InProgress ? "bg-yellow-500 border-4 border-white" : "bg-gray-400") border-2 border-white"></div>
                             <span class="bg-yellow-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">In-Progress</span>
-                            <p class="text-xs text-gray-500 mt-1">@Model.CreatedAt.AddDays(2).ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
+                            <p class="text-xs text-gray-500 mt-1">
+                                @(Model.InProgressAt?.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt") ?? "Processing")
+                            </p>
                             <p class="text-xs text-gray-400 italic mt-0.5">"Investigation ongoing"</p>
                         </div>
                     }
@@ -177,7 +186,9 @@
                         <div class="relative">
                             <div class="absolute -left-[23px] mt-1 h-4 w-4 rounded-full border-4 border-[#800000] bg-white"></div>
                             <span class="bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Resolved</span>
-                            <p class="text-xs text-gray-500 mt-1">@DateTime.Now.ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
+                            <p class="text-xs text-gray-500 mt-1">
+                                @(Model.ResolvedAt?.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt") ?? DateTime.UtcNow.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt"))
+                            </p>
                             <p class="text-xs text-gray-400 italic mt-0.5">"Issue has been resolved."</p>
                         </div>
                     }
@@ -187,11 +198,12 @@
                         <div class="relative">
                             <div class="absolute -left-[23px] mt-1 h-4 w-4 rounded-full border-4 border-red-600 bg-white"></div>
                             <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Rejected</span>
-                            <p class="text-xs text-gray-500 mt-1">@DateTime.Now.ToString("MM/dd/yyyy, hh:mm:ss tt")</p>
+                            <p class="text-xs text-gray-500 mt-1">
+                                @(Model.RejectedAt?.AddHours(8).ToString("MM/dd/yyyy, hh:mm:ss tt") ?? DateTime.Now.ToString("MM/dd/yyyy, hh:mm:ss tt"))
+                            </p>
                             <p class="text-xs text-gray-400 italic mt-0.5">"Report could not be verified."</p>
                         </div>
                     }
-
                 </div>
             </div>
         </div>

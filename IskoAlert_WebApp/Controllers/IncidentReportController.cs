@@ -145,6 +145,10 @@ namespace IskoAlert_WebApp.Controllers
                     ImagePath = ir.ImagePath,
                     Status = ir.Status,
                     CreatedAt = ir.CreatedAt,
+                    AcceptedAt = ir.AcceptedAt,
+                    InProgressAt = ir.InProgressAt,
+                    ResolvedAt = ir.ResolvedAt,
+                    RejectedAt = ir.RejectedAt,
                     ReporterName = ir.User.Name,
                     ReporterWebmail = ir.User.Webmail
                 })

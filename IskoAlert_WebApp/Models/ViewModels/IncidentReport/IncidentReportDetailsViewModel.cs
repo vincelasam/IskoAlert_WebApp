@@ -21,6 +21,11 @@ namespace IskoAlert_WebApp.Models.ViewModels.IncidentReport
 
         public DateTime CreatedAt { get; set; }
 
+        public DateTime? AcceptedAt { get; set; }
+        public DateTime? InProgressAt { get; set; }
+        public DateTime? ResolvedAt { get; set; }
+        public DateTime? RejectedAt { get; set; }
+
         // Reporter info (from User)
         public string ReporterName { get; set; } = string.Empty;
         public string ReporterWebmail { get; set; } = string.Empty;
