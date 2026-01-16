@@ -19,7 +19,7 @@ namespace IskoAlert_WebApp.Services.Interfaces
         // Edit the item
         Task UpdateItemAsync(EditItem model, int userId);
 
-        Task DeleteItemAsync(int itemId, int userId);
+        Task ArchiveItemAsync(int itemId, int userId);
         Task<string> SaveImageAsync(IFormFile imageFile);
     }
 }
