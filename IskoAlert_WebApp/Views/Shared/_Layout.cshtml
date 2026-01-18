@@ -1,12 +1,14 @@
 @using System.Security.Claims
 @using Microsoft.EntityFrameworkCore
 @inject IskoAlert_WebApp.Data.ApplicationDbContext _context
+@inject IskoAlert_WebApp.Services.Interfaces.INotificationService _notificationService
 
 @{
     // Fetch user details dynamically based on the logged-in user's email
     var userEmail = User.FindFirstValue(ClaimTypes.Email);
     string fullName = "Guest";
     string userRole = "Visitor";
+    int unreadCount = 0;
 
     if (!string.IsNullOrEmpty(userEmail))
     {
@@ -15,6 +17,8 @@
         {
             fullName = currentUser.Name;
             userRole = currentUser.Role.ToString();
+            // Get unread notification count
+            unreadCount = await _notificationService.GetUnreadCountAsync(currentUser.UserId);
         }
     }
 }
@@ -55,10 +59,13 @@
 
                 <div class="flex items-center gap-6">
 
-                    <a asp-controller="Notification" asp-action="Notifications" class="relative cursor-pointer hover:text-yellow-400 transition-colors">
-                        <i class="fa-regular fa-bell text-xl"></i>
-                        <span class="absolute -top-1 -right-1 bg-yellow-400 text-[#800000] text-[10px] font-bold px-1 rounded-full">2</span>
-                    </a>
+                        <a asp-controller="Notification" asp-action="Notifications" class="relative cursor-pointer hover:text-yellow-400 transition-colors">
+                            <i class="fa-regular fa-bell text-xl"></i>
+                            @if (unreadCount > 0)
+                            {
+                                <span class="absolute -top-1 -right-1 bg-yellow-400 text-[#800000] text-[10px] font-bold px-1 rounded-full">@unreadCount</span>
+                            }
+                        </a>
 
                     <div class="relative" x-data="{ open: false }">
                         <button x-on:click="open = !open"
