@@ -1,73 +1,61 @@
+
+@model IskoAlert_WebApp.Models.ViewModels.Notification.NotificationListViewModel
 @{
     ViewData["Title"] = "Admin Notifications";
-    Layout = "_AdminLayout"; 
+    Layout = "_AdminLayout";
 }
 
 <div class="max-w-4xl mx-auto">
-
     <a asp-controller="Admin" asp-action="Index" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#800000] mb-6 transition-colors">
         <i class="fa-solid fa-arrow-left"></i>
         Back to Dashboard
     </a>
 
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-
         <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <div class="flex items-center gap-3">
                     <i class="fa-regular fa-bell text-xl text-[#800000]"></i>
                     <h2 class="text-xl font-bold text-gray-900">Notifications</h2>
                 </div>
-                <p class="text-sm text-gray-500 mt-1">2 unread notifications</p>
+                <p class="text-sm text-gray-500 mt-1">@Model.UnreadCount unread notification(s)</p>
             </div>
 
-            <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
-                <i class="fa-solid fa-check-double text-gray-400"></i>
-                Mark all as read
-            </button>
+            <form asp-action="MarkAllAsRead" method="post" class="inline">
+                <button type="submit" class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <i class="fa-solid fa-check-double text-gray-400"></i>
+                    Mark all as read
+                </button>
+            </form>
         </div>
 
         <div class="p-6 space-y-4">
-
-            <div class="flex gap-4 p-4 rounded-lg border border-yellow-200 bg-yellow-50">
-                <div class="flex-shrink-0 mt-1">
-                    <i class="fa-solid fa-bell text-yellow-500 text-xl"></i>
-                </div>
-                <div class="flex-grow">
-                    <div class="flex justify-between items-start">
-                        <h3 class="font-bold text-gray-900">New Incident Report</h3>
-                        <span class="bg-yellow-400 text-[#800000] text-[10px] font-bold px-2 py-0.5 rounded">New</span>
+            @if (Model.Notifications.Any())
+            {
+                @foreach (var notification in Model.Notifications)
+                {
+                    <div class="flex gap-4 p-4 rounded-lg border @(notification.IsRead ? "border-gray-200 bg-white" : "border-yellow-200 bg-yellow-50")">
+                        <div class="flex-shrink-0 mt-1">
+                            <i class="fa-solid fa-bell text-xl @(notification.IsRead ? "text-gray-400" : "text-yellow-500")"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-bold text-gray-900">@notification.Title</h3>
+                                @if (!notification.IsRead)
+                                {
+                                    <span class="bg-yellow-400 text-[#800000] text-[10px] font-bold px-2 py-0.5 rounded">New</span>
+                                }
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">@notification.Message</p>
+                            <p class="text-xs text-gray-400 mt-2">@notification.CreatedAt.ToString("MM/dd/yyyy, h:mm:ss tt")</p>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600 mt-1">New theft incident reported by Lian Paredes - #IR-2025-001</p>
-                    <p class="text-xs text-gray-400 mt-2">12/20/2024, 10:30:00 AM</p>
-                </div>
-            </div>
-
-            <div class="flex gap-4 p-4 rounded-lg border border-yellow-200 bg-yellow-50">
-                <div class="flex-shrink-0 mt-1">
-                    <i class="fa-solid fa-bell text-yellow-500 text-xl"></i>
-                </div>
-                <div class="flex-grow">
-                    <div class="flex justify-between items-start">
-                        <h3 class="font-bold text-gray-900">New Incident Report</h3>
-                        <span class="bg-yellow-400 text-[#800000] text-[10px] font-bold px-2 py-0.5 rounded">New</span>
-                    </div>
-                    <p class="text-sm text-gray-600 mt-1">New property damage reported by Vince Michael Lasam - #IR-2025-004</p>
-                    <p class="text-xs text-gray-400 mt-2">12/26/2024, 11:45:00 AM</p>
-                </div>
-            </div>
-
-            <div class="flex gap-4 p-4 rounded-lg border border-gray-200 bg-white">
-                <div class="flex-shrink-0 mt-1">
-                    <i class="fa-solid fa-bell text-gray-400 text-xl"></i>
-                </div>
-                <div class="flex-grow">
-                    <h3 class="font-bold text-gray-900">Pending Report Requires Attention</h3>
-                    <p class="text-sm text-gray-600 mt-1">Report #IR-2025-004 has been pending for review</p>
-                    <p class="text-xs text-gray-400 mt-2">12/26/2024, 12:00:00 PM</p>
-                </div>
-            </div>
-
+                }
+            }
+            else
+            {
+                <p class="text-gray-500 text-center py-8">No notifications found.</p>
+            }
         </div>
     </div>
 </div>
