@@ -14,7 +14,7 @@ namespace IskoAlert_WebApp.Data
         public DbSet<User> Users { get; set; }
         public DbSet<IncidentReport> IncidentReports { get; set; }
         public DbSet<LostFoundItem> LostFoundItems { get; set; }
-        //public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -92,21 +92,22 @@ namespace IskoAlert_WebApp.Data
                 .Property(i => i.IncidentType)
                 .HasConversion<string>(); // Recommended if you want types like "Theft" readable in DB
 
-            //// 4. NOTIFICATION CONFIGURATION
-            //modelBuilder.Entity<Notification>(entity =>
-            //{
-            //    entity.HasKey(n => n.NotificationId);
-            //    entity.Property(n => n.Message).IsRequired().HasMaxLength(255);
-            //    entity.Property(n => n.CreatedAt).IsRequired();
+            //4. NOTIFICATION CONFIGURATION
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasKey(n => n.NotificationId);
+                entity.Property(n => n.Title).IsRequired().HasMaxLength(150);
+                entity.Property(n => n.Message).IsRequired().HasMaxLength(500);
+                entity.Property(n => n.CreatedAt).IsRequired();
 
-            //    // Enum: Notification Type
-            //    entity.Property(n => n.Type).HasConversion<string>().IsRequired();
+                // Enum: Notification Type
+                entity.Property(n => n.Type).HasConversion<string>().IsRequired();
 
-            //    entity.HasOne(n => n.User)
-            //          .WithMany()
-            //          .HasForeignKey(n => n.UserId)
-            //          .OnDelete(DeleteBehavior.Cascade);
-            //});
+                entity.HasOne(n => n.User)
+                      .WithMany()
+                      .HasForeignKey(n => n.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }
