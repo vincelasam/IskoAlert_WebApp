@@ -86,32 +86,32 @@
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
     <div class="p-6 border-b border-gray-100 flex justify-between items-center">
         <h3 class="font-bold text-gray-900">Recent Notifications</h3>
-        <a href="#" class="text-sm text-gray-600 hover:text-[#800000] font-medium">View All</a>
+        <a asp-controller="Notification" asp-action="Notifications" class="text-sm text-gray-600 hover:text-[#800000] font-medium">View All</a>
     </div>
 
     <div class="divide-y divide-gray-100">
-        <div class="p-6 hover:bg-yellow-50/50 transition-colors border-l-4 border-yellow-400 bg-yellow-50">
-            <div class="flex items-center gap-3 mb-1">
-                <h4 class="font-semibold text-gray-900">Report Status Updated</h4>
-                <span class="bg-yellow-400 text-xs font-bold px-2 py-0.5 rounded text-[#800000]">New</span>
+        @if (Model.RecentNotifications.Any())
+        {
+            @foreach (var notification in Model.RecentNotifications)
+            {
+                <div class="p-6 hover:bg-@(notification.IsRead ? "gray" : "yellow")-50 transition-colors border-l-4 @(notification.IsRead ? "border-transparent" : "border-yellow-400 bg-yellow-50")">
+                    <div class="flex items-center gap-3 mb-1">
+                        <h4 class="font-semibold text-gray-900">@notification.Title</h4>
+                        @if (!notification.IsRead)
+                        {
+                            <span class="bg-yellow-400 text-xs font-bold px-2 py-0.5 rounded text-[#800000]">New</span>
+                        }
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">@notification.Message</p>
+                    <p class="text-xs text-gray-400">@notification.CreatedAt.ToString("MM/dd/yyyy, h:mm:ss tt")</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="p-6 text-center text-gray-500">
+                <p>No notifications yet.</p>
             </div>
-            <p class="text-sm text-gray-600 mb-2">Your incident report #IR-2025-001 status has been updated to "In-Progress"</p>
-            <p class="text-xs text-gray-400">12/22/2024, 2:20:00 PM</p>
-        </div>
-
-        <div class="p-6 hover:bg-gray-50 transition-colors border-l-4 border-transparent">
-            <h4 class="font-semibold text-gray-900 mb-1">Report Resolved</h4>
-            <p class="text-sm text-gray-600 mb-2">Your incident report #IR-2025-002 has been resolved.</p>
-            <p class="text-xs text-gray-400">12/19/2024, 4:30:00 PM</p>
-        </div>
-
-        <div class="p-6 hover:bg-yellow-50/50 transition-colors border-l-4 border-yellow-400 bg-yellow-50">
-            <div class="flex items-center gap-3 mb-1">
-                <h4 class="font-semibold text-gray-900">New Lost Item Match</h4>
-                <span class="bg-yellow-400 text-xs font-bold px-2 py-0.5 rounded text-[#800000]">New</span>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">A new found item matches your search criteria.</p>
-            <p class="text-xs text-gray-400">12/21/2024, 11:00:00 AM</p>
-        </div>
+        }
     </div>
 </div>
