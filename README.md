@@ -1,52 +1,186 @@
-# Iskolar Alert: PUP Incident Reporting & Lost and Found App
+# Iskolar Alert: PUP Incident Report & Lost and Found
 
-**IskoAlert** is a centralized campus safety and community service platform designed for the **Polytechnic University of the Philippines (PUP)**. This repository contains the **Incident Reporting** and **Lost & Found** modules, built using **C# ASP.NET Core MVC**.
+A centralized web application for reporting campus incidents and managing lost-and-found items at the Polytechnic University of the Philippines (PUP).
 
-[cite_start]These modules are designed to integrate into the main *IskoAlert* ecosystem, utilizing shared authentication and database infrastructure to enhance campus security and facilitate item recovery[cite: 7, 8].
+## 📋 Overview
+
+Iskolar Alert is an integrated platform that addresses the lack of a unified digital system for campus safety reporting and lost property management at PUP. The system provides students and administrators with streamlined tools for incident reporting, status tracking, and item recovery coordination.
+
+## ✨ Key Features
+
+### For Students
+- **Incident Reporting**: Submit detailed incident reports with descriptions, locations, and photo evidence
+- **Status Tracking**: Monitor report progress through structured workflow (Pending → Accepted → In-Progress → Resolved)
+- **Lost & Found**: Report and browse lost or found items with search and filter capabilities
+- **Notifications**: Receive real-time updates via in-app and email notifications
+- **Feedback System**: Rate and provide feedback on resolved incidents
+
+### For Administrators
+- **Report Management**: Review, triage, and update incident statuses
+- **Staff Assignment**: Assign security personnel to specific cases
+- **Oversight Dashboard**: Monitor all system activity and user submissions
+- **Lost & Found Administration**: Ensure content compliance and manage archived items
+- **Analytics**: View feedback ratings and service quality metrics
+
+## 🏗️ Technology Stack
+
+- **Framework**: ASP.NET Core Web App (MVC)
+- **Backend**: C#
+- **Database**: Azure SQL Server with Entity Framework Core
+- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
+- **Authentication**: Cookie-based authentication with PUP Webmail integration
+- **Security**: BCrypt password hashing
+- **Version Control**: Git
+
+## 📦 Dependencies
+
+```xml
+- BCrypt.Net-Next (4.0.3)
+- Microsoft.EntityFrameworkCore.SqlServer (8.0.11)
+- Microsoft.EntityFrameworkCore.Tools (8.0.11)
+- System.Data.SqlClient (4.9.0)
+- System.Data.Common (4.3.0)
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Operating System**: Windows 10/11 (preferred) or macOS
+- **IDE**: Visual Studio 2022 with ASP.NET and web development workload
+- **.NET SDK**: Version 8.0 or later
+- **Git**: Latest version
+- **Hardware**: 
+  - CPU: 1.8 GHz or faster 64-bit processor
+  - RAM: 8 GB minimum (16 GB recommended)
+  - Storage: 20 GB free disk space
+- **Browser**: Latest version of Edge, Chrome, or Firefox
+- **Internet**: Required for Azure SQL connectivity
+
+### Installation
+
+1. **Clone the Repository**
+   ```bash
+   git clone [repository-url]
+   cd IskoAlert_WebApp
+   ```
+
+2. **Open Solution**
+   - Double-click `IskoAlert_WebApp.sln` to open in Visual Studio
+
+3. **Restore NuGet Packages**
+   - Right-click the Solution in Solution Explorer
+   - Select "Restore NuGet Packages"
+
+4. **Configure Database**
+   - Open `appsettings.json`
+   - Update the `DefaultConnection` string with your Azure SQL credentials:
+     ```json
+     "ConnectionStrings": {
+       "DefaultConnection": "Server=your-server.database.windows.net;Database=your-database;User Id=your-username;Password=your-password;"
+     }
+     ```
+
+5. **Run Migrations**
+   - Open Package Manager Console (Tools > NuGet Package Manager > Package Manager Console)
+   - Execute:
+     ```powershell
+     Add-Migration InitialCreate
+     Update-Database
+     ```
+
+6. **Build and Run**
+   - Press `Ctrl + Shift + B` to build
+   - Press `F5` to run the application
+   - The browser should automatically open to the login page
+
+## 🔐 Authentication
+
+### Student Registration
+- **Email Format**: Must match `^[a-zA-Z0-9._%+-]+@iskolarngbayan\.pup\.edu\.ph$`
+- **Student ID Format**: `YYYY-XXXXX-MN-0`
+- Passwords are hashed using BCrypt before storage
+
+### Role-Based Access
+- **Students**: Redirected to `Home/Index` after login
+- **Admins**: Redirected to `Admin/Index` after login
+- Only accounts with `AccountStatus == Active` can log in
+
+## 📱 Core Modules
+
+### Incident Reporting Module
+- Submit incident reports with type, location, description, and photos
+- Automatic assignment of "Pending" status
+- Structured status workflow management
+- Feedback submission for resolved incidents
+
+### Lost and Found Module
+- Report lost or found items with detailed descriptions
+- Browse and search active listings
+- 30-day archive rule (items auto-archived after 30 days)
+- Coordinate recovery via university webmail
+
+## 👥 Target Users
+
+- **Students**: Submit reports, track statuses, manage lost/found items
+- **Administrators**: Manage reports, update statuses, assign staff, oversee system activity
+
+## 🔔 Notifications
+
+The system provides:
+- In-app notifications for status updates
+- Email notifications for important events
+- Automatic alerts for potential lost-and-found matches
+
+## 🛡️ Security Features
+
+- Cookie-based authentication
+- BCrypt password encryption
+- PUP Webmail credential validation
+- Role-based access control (RBAC)
+- HTTPS enforcement for all communications
+
+## 📊 Project Structure
+
+```
+IskoAlert_WebApp/
+├── Controllers/        # MVC Controllers
+├── Models/            # Data models and entities
+├── Views/             # Razor views
+├── Services/          # Business logic and services
+├── Data/              # Database context and migrations
+├── wwwroot/           # Static files (CSS, JS, images)
+└── appsettings.json   # Configuration file
+```
+
+## 🎓 Academic Context
+
+This project was developed as partial fulfillment for:
+- **Course**: COMP 019 - Application Development and Emerging Technologies
+- **Program**: BSCS 3-1
+- **Institution**: Polytechnic University of the Philippines, College of Computer and Information Sciences
+
+## 👨‍💻 Development Team
+
+- Lasam, Vince Michael
+- Mercado, Jeff Petterson
+- Nicolas, John Rich M.
+- Paredes, Lian
+
+## 📄 License
+
+This project is developed for academic purposes at the Polytechnic University of the Philippines.
+
+## 🤝 Contributing
+
+This is an academic project. For questions or suggestions, please contact the development team through official PUP channels.
+
+## 📞 Support
+
+For technical issues or questions:
+- Contact the development team via PUP Webmail
+- Refer to the comprehensive User Guide in the project documentation
 
 ---
 
-## 📋 Table of Contents
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Prerequisites](#-prerequisites)
-- [Getting Started](#-getting-started)
-- [Project Structure](#-project-structure)
-- [The Team](#-the-team)
-
----
-
-## 🚀 Features
-
-### 1. Incident Reporting Module
-Allows students and faculty to report campus emergencies or safety concerns directly to the administration.
- **Submit Reports:** Users can provide detailed descriptions, categorize incidents (e.g., hazard, theft), specify campus location, and upload photo evidence.
- **Status Tracking:** Reporters can track the progress of their reports via a personal dashboard (Pending → Accepted → In-Progress → Resolved).
- **Admin Dashboard:** Security personnel can filter reports, update statuses, and assign staff to respond to specific incidents.
-
-### 2. Lost and Found Module
-[cite_start]A centralized platform for reporting and recovering lost items within the campus.
- **Post Listings:** Users can report lost or found items with photos, descriptions, and last-known locations.
- **Browse & Search:** A searchable database of items that helps match owners with found belongings.
- **Auto-Expiration:** Listings automatically expire after 30 days to keep the database current.
- **Secure Contact:** Facilitates communication between parties using the official PUP Webmail system.
-
-### 3. Integration
-**Authentication:** Integrates with the main Iskolar Alert app, requiring valid **PUP Webmail** credentials for access.
-**Notifications:** Sends alerts via email and in-app dashboards when report statuses change or matches are found.
-
----
-
-## 🛠 Tech Stack
-**Framework:** ASP.NET Core Web App (Model-View-Controller) 
-**Database:** SQL Server (via Entity Framework Core) 
-**Frontend:** HTML5, CSS3, JavaScript (Bootstrap)
- **Tools:** Visual Studio, NuGet Package Manager, Git
-
----
-
-## ⚙️ Prerequisites
-Before running this project, ensure you have the following installed:
-* [Visual Studio 2022](https://visualstudio.microsoft.com/) (with "ASP.NET and web development" workload)
-* [.NET 8.0 SDK](https://dotnet.microsoft.com/download) (or later)
-* SQL Server (LocalDB or Express)
+**Note**: This application is intended for use within the PUP campus community and requires valid PUP Webmail credentials for access.
