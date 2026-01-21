@@ -15,6 +15,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICredibilityAnalyzerService, CredibilityAnalyzerService>();
 builder.Services.AddScoped<ILostFoundService, LostFoundService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString, sqlOptions =>

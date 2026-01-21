@@ -1,25 +1,44 @@
 ﻿@model List<IskoAlert_WebApp.Models.ViewModels.Admin.AdminIncidentReportViewModel>
 @using IskoAlert_WebApp.Models.Domain.Enums;
 @{
-    ViewData["Title"] = "Auto-Processed Reports";
+    ViewData["Title"] = "All Reports";
     Layout = "_AdminLayout";
 }
 
 <div class="max-w-7xl mx-auto">
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900">Auto-Processed Reports</h2>
-        <p class="text-gray-500">Review reports that were automatically accepted or rejected</p>
+        <h2 class="text-2xl font-bold text-gray-900">All Reports</h2>
+        <p class="text-gray-500">View and filter all incident reports by status</p>
     </div>
 
     <!-- Filter Section -->
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-        <form method="get" class="flex gap-4">
-            <select name="statusFilter" class="w-48 bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-2.5">
-                <option value="">All Status</option>
-                <option value="Accepted" selected="@(ViewBag.StatusFilter == "Accepted")">Accepted</option>
-                <option value="Rejected" selected="@(ViewBag.StatusFilter == "Rejected")">Rejected</option>
-            </select>
-            <button type="submit" class="bg-[#800000] hover:bg-red-900 text-white text-sm font-semibold py-2 px-6 rounded-lg">
+        <form method="get" class="flex flex-col lg:flex-row gap-4">
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                </div>
+                <input type="text" name="keyword"
+                       class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block w-full pl-10 p-2.5"
+                       placeholder="Search by report ID, reporter, or location..."
+                       value="@ViewBag.Search">
+            </div>
+
+            <div class="relative w-full sm:w-48">
+                <select name="statusFilter" class="w-full bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-[#800000] focus:border-[#800000] block p-2.5 appearance-none cursor-pointer hover:bg-gray-50 transition-colors">
+                    <option value="All" selected="@(ViewBag.StatusFilter == null || ViewBag.StatusFilter == "All")">All Status</option>
+                    <option value="Pending" selected="@(ViewBag.StatusFilter == "Pending")">Pending</option>
+                    <option value="Accepted" selected="@(ViewBag.StatusFilter == "Accepted")">Accepted</option>
+                    <option value="InProgress" selected="@(ViewBag.StatusFilter == "InProgress")">In Progress</option>
+                    <option value="Resolved" selected="@(ViewBag.StatusFilter == "Resolved")">Resolved</option>
+                    <option value="Rejected" selected="@(ViewBag.StatusFilter == "Rejected")">Rejected</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="bg-[#800000] hover:bg-red-900 text-white text-sm font-semibold py-2 px-6 rounded-lg transition-colors">
                 Filter
             </button>
         </form>
@@ -36,37 +55,81 @@
                         <th class="px-6 py-3 font-medium">Reporter</th>
                         <th class="px-6 py-3 font-medium">Credibility Score</th>
                         <th class="px-6 py-3 font-medium">Status</th>
+                        <th class="px-6 py-3 font-medium">Processed By</th>
                         <th class="px-6 py-3 font-medium">Date</th>
                         <th class="px-6 py-3 font-medium">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach (var report in Model)
+                    @if (Model != null && Model.Any())
                     {
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 font-semibold text-gray-900">#IR-@report.ReportId</td>
-                            <td class="px-6 py-4">@report.IncidentType</td>
-                            <td class="px-6 py-4">@report.ReporterName</td>
-                            <td class="px-6 py-4">
-                                <span class="px-2 py-1 rounded text-xs font-bold
-                                        @(report.CredibilityScore >= 75 ? "bg-green-100 text-green-700" :
-                                                                            report.CredibilityScore >= 30 ? "bg-yellow-100 text-yellow-700" :
-                                                                            "bg-red-100 text-red-700")">
-                                    @report.CredibilityScore
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-bold
-                                        @(report.Status == ReportStatus.Accepted ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700")">
-                                    @report.Status
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">@report.CreatedAt.ToString("MM/dd/yyyy")</td>
-                            <td class="px-6 py-4">
-                                <a asp-controller="Admin" asp-action="ReviewIncident" asp-route-id="@report.ReportId"
-                                   class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium">
-                                    Review
-                                </a>
+                        @foreach (var report in Model)
+                        {
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-semibold text-gray-900">#IR-@report.ReportId.ToString("D4")</td>
+                                <td class="px-6 py-4">@report.IncidentType</td>
+                                <td class="px-6 py-4">@report.ReporterName</td>
+                                <td class="px-6 py-4">
+                                    @{
+                                        var credibilityClass = report.CredibilityScore >= 75
+                                        ? "bg-green-100 text-green-700"
+                                        : report.CredibilityScore >= 30
+                                        ? "bg-yellow-100 text-yellow-700"
+                                        : "bg-red-100 text-red-700";
+                                    }
+                                    <span class="px-2 py-1 rounded text-xs font-bold @credibilityClass">
+                                        @report.CredibilityScore
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @{
+                                        var statusClass = report.Status switch
+                                        {
+                                            ReportStatus.Pending => "bg-orange-100 text-orange-700",
+                                            ReportStatus.Accepted => "bg-blue-100 text-blue-700",
+                                            ReportStatus.InProgress => "bg-yellow-100 text-yellow-700",
+                                            ReportStatus.Resolved => "bg-green-100 text-green-700",
+                                            ReportStatus.Rejected => "bg-red-100 text-red-700",
+                                            _ => "bg-gray-100 text-gray-700"
+                                        };
+                                    }
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold @statusClass">
+                                        @report.Status
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if (report.IsAutoProcessed)
+                                    {
+                                        <span class="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700">
+                                            <i class="fa-solid fa-robot mr-1"></i>Auto
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                                            <i class="fa-solid fa-user mr-1"></i>Manual
+                                        </span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4">@report.CreatedAt.ToString("MM/dd/yyyy")</td>
+                                <td class="px-6 py-4">
+                                    <a asp-controller="Admin" asp-action="ReviewIncident" asp-route-id="@report.ReportId"
+                                       class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 px-3 py-1 rounded text-xs font-medium transition-colors">
+                                        Review
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="px-6 py-8 text-center text-gray-500">
+                                <div class="flex flex-col items-center gap-2">
+                                    <i class="fa-regular fa-inbox text-4xl text-gray-300"></i>
+                                    <p class="font-medium">No reports found</p>
+                                    <p class="text-sm">Try adjusting your filters or search criteria.</p>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -74,4 +137,11 @@
             </table>
         </div>
     </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="mt-4 text-sm text-gray-500">
+            Showing <span class="font-semibold text-gray-900">@Model.Count</span> report(s)
+        </div>
+    }
 </div>

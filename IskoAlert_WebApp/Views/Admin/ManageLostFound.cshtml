@@ -99,8 +99,25 @@
                             <td class="px-6 py-4">@item.CampusLocation</td>
                             <td class="px-6 py-4">@item.DatePosted.ToString("M/d/yyyy")</td>
                             <td class="px-6 py-4">
-                                <a asp-action="EditLostFound" asp-route-id="@item.Id"
-                                   class="text-blue-600 hover:underline">Edit</a>
+                                <div class="flex gap-3 items-center">
+                                    <a asp-action="EditLostFound" asp-controller="Admin" asp-route-id="@item.Id"
+                                       class="text-blue-600 hover:underline text-sm">Edit</a>
+                                    @if (item.Status != "Archived")
+                                    {
+                                        <form asp-action="ArchiveLostFound" asp-controller="Admin" asp-route-id="@item.Id" method="post" class="inline m-0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit"
+                                                    onclick="return confirm('Are you sure you want to archive this item?')"
+                                                    class="text-red-600 hover:underline text-sm bg-transparent border-0 p-0 cursor-pointer">
+                                                Archive
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-gray-400 text-sm">Archived</span>
+                                    }
+                                </div>
                             </td>
                         </tr>
                     }

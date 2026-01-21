@@ -2,26 +2,32 @@ using IskoAlert_WebApp.Data;
 using IskoAlert_WebApp.Models.Domain.Enums;
 using IskoAlert_WebApp.Models.ViewModels.Admin;
 using IskoAlert_WebApp.Models.ViewModels.LostFound;
+using IskoAlert_WebApp.Services;
 using IskoAlert_WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using IskoAlert_WebApp.Services;
 
-namespace IskolarAlert.Controllers
+namespace IskoAlert_WebApp.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILostFoundService _lostFoundService;
-        public AdminController(ApplicationDbContext context, ILostFoundService lostFoundService)
+        private readonly INotificationService _notificationService;
+
+        public AdminController(
+            ApplicationDbContext context,
+            ILostFoundService lostFoundService,
+            INotificationService notificationService)
         {
             _context = context;
             _lostFoundService = lostFoundService;
+            _notificationService = notificationService;
         }
-       
+
 
         // GET: /Admin/Index
         // Dashboard showing automation metrics
@@ -123,20 +129,32 @@ namespace IskolarAlert.Controllers
         // Shows: Reports that were auto-accepted or auto-rejected
         // Allows admins to review automated decisions
         // ============================================
-        public async Task<IActionResult> AutoProcessedReports(string? statusFilter)
+        public async Task<IActionResult> AutoProcessedReports(string? statusFilter, string? keyword)
         {
             var query = _context.IncidentReports
                 .Include(r => r.User)
-                .Where(r => r.IsAutoProcessed)
                 .AsQueryable();
 
-            // Filter by status (Accepted or Rejected)
-            if (!string.IsNullOrEmpty(statusFilter))
+            // Filter by status
+            if (!string.IsNullOrEmpty(statusFilter) && statusFilter != "All")
             {
-                if (statusFilter == "Accepted")
-                    query = query.Where(r => r.Status == ReportStatus.Accepted);
-                else if (statusFilter == "Rejected")
-                    query = query.Where(r => r.Status == ReportStatus.Rejected);
+                if (Enum.TryParse<ReportStatus>(statusFilter, out var status))
+                {
+                    query = query.Where(r => r.Status == status);
+                }
+            }
+
+            // Keyword search
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                var searchTerm = keyword.ToLower();
+                query = query.Where(r =>
+                    r.ReportId.ToString().Contains(searchTerm) ||
+                    (r.User.Name != null && r.User.Name.ToLower().Contains(searchTerm)) ||
+                    r.CampusLocation.ToString().ToLower().Contains(searchTerm) ||
+                    r.IncidentType.ToString().ToLower().Contains(searchTerm) ||
+                    (r.Title != null && r.Title.ToLower().Contains(searchTerm))
+                );
             }
 
             var reports = await query
@@ -156,6 +174,7 @@ namespace IskolarAlert.Controllers
                 .ToListAsync();
 
             ViewBag.StatusFilter = statusFilter;
+            ViewBag.Search = keyword;
             return View(reports);
         }
 
@@ -205,19 +224,49 @@ namespace IskolarAlert.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateReportStatus(int reportId, ReportStatus newStatus, string? remarks)
         {
-            var report = await _context.IncidentReports.FindAsync(reportId);
+            var report = await _context.IncidentReports
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.ReportId == reportId);
+
             if (report == null)
                 return NotFound();
 
+            var oldStatus = report.Status;
             report.UpdateStatus(newStatus);
 
-            // TODO: If you want to save remarks, you can add them to AnalysisReason or create a separate AdminRemarks field
-
             await _context.SaveChangesAsync();
+            var notificationTitle = $"Incident Report #{reportId} Update";
+
+            var notificationMessage = newStatus switch
+            {
+                ReportStatus.Rejected => $"Your incident report #{reportId} has been rejected. " +
+                                          (!string.IsNullOrEmpty(remarks) ? $"Reason: {remarks}" : "Please review and resubmit with more details."),
+                ReportStatus.Accepted => $"Your incident report #{reportId} has been accepted and is now being processed.",
+                ReportStatus.InProgress => $"Your incident report #{reportId} status has been updated to \"In-Progress\". We are actively working on this.",
+                ReportStatus.Resolved => $"Your incident report #{reportId} has been resolved.",
+                _ => $"Your incident report #{reportId} status has been updated from {oldStatus} to {newStatus}."
+            };
+
+            // FIX: Just use NotificationType directly (not Models.Domain.Enums.NotificationType)
+            var notificationType = newStatus switch
+            {
+                ReportStatus.Resolved => NotificationType.IncidentResolved,
+                ReportStatus.Rejected => NotificationType.IncidentStatusUpdate,
+                _ => NotificationType.IncidentStatusUpdate
+            };
+
+            await _notificationService.CreateNotificationAsync(
+                report.UserId,
+                notificationTitle,
+                notificationMessage,
+                notificationType,
+                relatedReportId: reportId
+            );
 
             TempData["SuccessMessage"] = $"Report #{reportId} status updated to {newStatus}";
             return RedirectToAction(nameof(ReviewIncident), new { id = reportId });
         }
+
 
         // ============================================
         // BULK ACCEPT PENDING - Quick action
@@ -382,6 +431,47 @@ namespace IskolarAlert.Controllers
             }
         }
 
+        // ARCHIVE LOST & FOUND ITEM
+        // Allows: Admin to archive any lost & found item
+        // ============================================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ArchiveLostFound(int id)
+        {
+            try
+            {
+                // Get the item to find its owner
+                var item = await _context.LostFoundItems
+                    .FirstOrDefaultAsync(lf => lf.ItemId == id);
+
+                if (item == null)
+                    return NotFound();
+
+                // For admins, pass the item owner's userId (admins can archive any item)
+                // The service will call item.Archive(userId) which requires the owner's userId
+                await _lostFoundService.ArchiveItemAsync(id, item.UserId);
+
+                TempData["SuccessMessage"] = "Item archived successfully!";
+            }
+            catch (KeyNotFoundException)
+            {
+                TempData["ErrorMessage"] = "Item not found.";
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(ManageLostFound));
+        }
 
         public IActionResult Notifications()
         {

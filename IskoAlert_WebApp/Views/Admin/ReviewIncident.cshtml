@@ -213,14 +213,27 @@
                         <div class="pt-2 border-t border-gray-100">
                             <p class="text-xs text-gray-600 mb-3">Quick Actions for Pending Reports:</p>
                             <div class="space-y-2">
-                                <button type="submit" name="newStatus" value="Accepted" class="w-full py-2 text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-xs transition-colors flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-check"></i>
-                                    Accept Report
-                                </button>
-                                <button type="submit" name="newStatus" value="Rejected" class="w-full py-2 text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs transition-colors flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-xmark"></i>
-                                    Reject Report
-                                </button>
+                                <form asp-controller="Admin" asp-action="UpdateReportStatus" method="post" class="inline-block w-full">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="reportId" value="@Model.ReportId" />
+                                    <input type="hidden" name="newStatus" value="Accepted" />
+                                    <textarea name="remarks" class="hidden">@Model.AnalysisReason</textarea>
+                                    <button type="submit" class="w-full py-2 text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-xs transition-colors flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-check"></i>
+                                        Accept Report
+                                    </button>
+                                </form>
+
+                                <form asp-controller="Admin" asp-action="UpdateReportStatus" method="post" class="inline-block w-full">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="reportId" value="@Model.ReportId" />
+                                    <input type="hidden" name="newStatus" value="Rejected" />
+                                    <textarea name="remarks" class="hidden">@Model.AnalysisReason</textarea>
+                                    <button type="submit" class="w-full py-2 text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs transition-colors flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-xmark"></i>
+                                        Reject Report
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     }
